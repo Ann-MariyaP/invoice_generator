@@ -1,0 +1,45 @@
+.form-control:focus {
+  outline: none !important;
+  box-shadow: none !important;
+  border: 1px solid #cacbcb !important;
+}
+.dwnld_btn {
+  background-color: rgb(4, 170, 10);
+  color: white;
+}
+.from_row {
+  background-color: rgb(241, 246, 251);
+}
+.invoice_head {
+  color: #434a4f;
+  font-weight: 600;
+}
+
+.phone-icon {
+  font-size: 16px;
+  margin-bottom: 2px;
+  margin-right: 14px;
+  color: #425f71;
+}
+.custom-row-even {
+  background-color: #cee0ea;
+}
+.note {
+  color: #a7b2b8;
+  font-size: small;
+}
+.invoice_preview {
+  margin-block: 15px;
+  font-size: 22px;
+  padding: 60px;
+}
+.rows {
+  padding-inline: 6px;
+  padding-block: 10px;
+  font-weight: 500;
+  color: #434a4f;
+}
+.preview_font {
+  font-weight: 500;
+  color: #434a4f;
+}

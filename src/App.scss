@@ -1,0 +1,23 @@
+
+
+.selected_tab{
+  border-bottom:2.5px solid  #0723db !important;
+  border-radius: 0 !important;
+  font-weight: 500 !important;
+    &:focus {
+    outline: none !important;
+    box-shadow: none !important;
+  }
+  &:hover {
+    outline: none !important;
+    box-shadow: none !important;
+    border: none !important;
+  }
+}
+.unselected_tab{
+border-bottom:2px solid  #e0e0f2 !important;
+  border-radius: 0 !important;
+}
+
+
+
