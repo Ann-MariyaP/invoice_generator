@@ -296,17 +296,43 @@ const PreviewTab = ({
     doc.text(phone || "", 18, 46);
 
     // INVOICE INFO
-    doc.setFontSize(14);
-    doc.text("INVOICE", 160, 20);
+    doc.setFontSize(13);
+    doc.text("INVOICE", 195, 20, {
+      align: "right",
+    });
     doc.setFontSize(11);
-    doc.text(invoiceNumber || "", 160, 27);
-    doc.text("DATE: " + (invoiceDate || ""), 160, 34);
-    doc.text("DUE: " + (dueDate || ""), 160, 41);
-    doc.text("BALANCE DUE:", 160, 48);
-    doc.text(`${currency} ${total.toFixed(2)}`, 160, 55);
+    doc.text(invoiceNumber || "", 195, 26, {
+      align: "right",
+    });
+    doc.text("DATE", 195, 36, {
+      align: "right",
+    });
+    doc.text(invoiceDate || "", 195, 43, {
+      align: "right",
+    });
+
+    if (dueDate) {
+      doc.text("DUE", 195, 53, { align: "right" });
+      doc.text(dueDate, 195, 59, {
+        align: "right",
+      });
+      doc.text("BALANCE DUE", 195, 69, {
+        align: "right",
+      });
+      doc.text(`${currency} ${total.toFixed(2)}`, 195, 75, {
+        align: "right",
+      });
+    } else {
+      doc.text("BALANCE DUE", 195, 53, {
+        align: "right",
+      });
+      doc.text(`${currency} ${total.toFixed(2)}`, 195, 59, {
+        align: "right",
+      });
+    }
 
     // BILL TO
-    doc.setFontSize(12);
+    doc.setFontSize(11);
     doc.text("BILL TO :", 18, 65);
     doc.setFontSize(11);
     doc.text(clientName || "", 18, 72);
@@ -324,31 +350,51 @@ const PreviewTab = ({
         item.quantity,
         `${currency} ${(item.quantity * item.price).toFixed(2)}`,
       ]),
-      headStyles: { fillColor: headerColor, halign: "center" },
-      bodyStyles: { halign: "center" },
+      headStyles: {
+        fillColor: headerColor,
+        textColor: [0, 0, 0],
+      },
+      styles: {
+        fontSize: 10,
+        cellPadding: 3,
+        textColor: [0, 0, 0],
+      },
+      columnStyles: {
+        0: { cellWidth: 100, halign: "left" },
+        1: { cellWidth: 30, halign: "right" },
+        2: { cellWidth: 20, halign: "center" },
+        3: { cellWidth: 30, halign: "right" },
+      },
       alternateRowStyles: { fillColor: lightBlue },
-      theme: "grid",
+      theme: "plain",
     });
 
     // SUMMARY
     let finalY = doc.lastAutoTable.finalY + 10;
     doc.setFontSize(11);
-    doc.text("SUBTOTAL :", 150, finalY);
-    doc.text(`${currency} ${subtotal.toFixed(2)}`, 190, finalY, {
+    doc.text("SUBTOTAL :", 90, finalY);
+    doc.text(`${subtotal.toFixed(2)}`, 194, finalY, {
       align: "right",
     });
-    doc.text(`TAX (${taxRate}%) :`, 150, finalY + 7);
-    doc.text(`${currency} ${taxAmount.toFixed(2)}`, 190, finalY + 7, {
+    doc.text(`TAX (${taxRate}%) :`, 90, finalY + 7);
+    doc.text(`${currency} ${taxAmount.toFixed(2)}`, 194, finalY + 7, {
       align: "right",
     });
-    doc.text(`DISCOUNT (${discount}%) :`, 150, finalY + 14);
-    doc.text(`- ${currency} ${discountAmount.toFixed(2)}`, 190, finalY + 14, {
-      align: "right",
-    });
-    doc.text("TOTAL :", 150, finalY + 21);
-    doc.text(`${currency} ${total.toFixed(2)}`, 190, finalY + 21, {
-      align: "right",
-    });
+    if (discountAmount) {
+      doc.text(`DISCOUNT (${discount}%) :`, 90, finalY + 14);
+      doc.text(`- ${currency} ${discountAmount.toFixed(2)}`, 194, finalY + 14, {
+        align: "right",
+      });
+      doc.text("TOTAL :", 90, finalY + 21);
+      doc.text(`${currency} ${total.toFixed(2)}`, 194, finalY + 21, {
+        align: "right",
+      });
+    } else {
+      doc.text("TOTAL :", 90, finalY + 14);
+      doc.text(`${currency} ${total.toFixed(2)}`, 194, finalY + 14, {
+        align: "right",
+      });
+    }
 
     // NOTES
     doc.setFontSize(10);
