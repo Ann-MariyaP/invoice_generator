@@ -4,8 +4,10 @@ import "./design.scss";
 const InvoiceDetailsTab = ({
   invoiceNumber,
   setInvoiceNumber,
-  currency,
-  setCurrency,
+  currencies,
+  setCurrencies,
+  selectedCurrency,
+  setSelectedCurrency,
   invoiceDate,
   setInvoiceDate,
   dueDate,
@@ -44,15 +46,23 @@ const InvoiceDetailsTab = ({
         </div>
         <div className="col-md-6">
           <label>Currency</label>
+          
           <select
             className="form-control"
-            value={currency}
-            onChange={(e) => setCurrency(e.target.value)}
+            value={selectedCurrency?.code || ''}
+            onChange={(e)=>{
+              const code = e.target.value;
+              const currency = currencies.find(c=>c.code === code);
+              setSelectedCurrency(currency || null);
+            }}
           >
-            <option value="CAD ($)" selected>CAD ($)</option>
-            <option value="EUR (€)">EUR (€)</option>
-            <option value="INR (₹)">INR (₹)</option>
-            <option value="USD ($)">USD ($)</option>
+            
+            {currencies.map((currency)=>(
+              <option key={currency.code} value={
+                currency.code
+              }>{currency.code} ({currency.symbol})</option>
+            ))}
+          
           </select>
         </div>
       </div>

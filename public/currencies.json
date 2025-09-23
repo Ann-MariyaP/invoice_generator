@@ -1,0 +1,6 @@
+[
+  { "code": "CAD", "symbol": "$" },
+  { "code": "EUR", "symbol": "€" },
+  { "code": "INR", "symbol": "₹" },
+  { "code": "USD", "symbol": "$" }
+]

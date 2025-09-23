@@ -7,21 +7,13 @@
 
 // const PreviewTab = ({
 //   invoiceNumber,
-//   currency,
+//   currencies,
 //   invoiceDate,
 //   dueDate,
 //   name,
 //   email,
 //   phone,
 //   address,
-//   clientName,
-//   clientEmail,
-//   clientPhone,
-//   clientAddress,
-//   items,
-//   notes,
-//   taxRate,
-//   discount,
 // }) => {
 //   const subtotal = items.reduce(
 //     (sum, item) => sum + item.quantity * item.price,
@@ -65,7 +57,7 @@
 //       <div ref={divRef} className="container invoice_preview border">
 //         <div
 //           className="row"
-//           style={{ backgroundColor: "#425f71", height: "18px" }}
+//           style={{ backgroundColor: "#516f82ff", height: "18px" }}
 //         ></div>
 //         <div className="row mb-5 from_row align-items-center">
 //           <div className="col text-start ">
@@ -91,7 +83,7 @@
 //             {dueDate && <p>Due Date: {dueDate}</p>}
 //             <p className="invoice_head mb-1"> BALANCE DUE</p>
 //             <p className="preview_font">
-//               {currency} {total.toFixed(2)}
+//               {currencies} {total.toFixed(2)}
 //             </p>
 //           </div>
 //         </div>
@@ -215,7 +207,7 @@
 //               >
 //                 <div className="col">BALANCE DUE :</div>
 //                 <div className=" col text-end">
-//                   {currency} {total.toFixed(2)}
+//                   {currencies} {total.toFixed(2)}
 //                 </div>
 //               </div>
 //             </div>
@@ -243,7 +235,8 @@ import autoTable from "jspdf-autotable";
 
 const PreviewTab = ({
   invoiceNumber,
-  currency,
+  currencies,
+  selectedCurrency,
   invoiceDate,
   dueDate,
   name,
@@ -280,6 +273,8 @@ const PreviewTab = ({
 
   useEffect(() => {
     const doc = new jsPDF();
+    const code = selectedCurrency.code || "";
+    const symbol = selectedCurrency.symbol || "";
     const headerColor = [41, 74, 107];
     const lightBlue = [220, 230, 242];
 
@@ -289,11 +284,11 @@ const PreviewTab = ({
 
     // BILL FROM
     doc.setFontSize(16);
-    doc.text(name || "Company Name", 18, 25);
+    doc.text(name || "Company Name", 17, 25);
     doc.setFontSize(11);
-    doc.text(address || "", 18, 32);
-    doc.text(email || "", 18, 39);
-    doc.text(phone || "", 18, 46);
+    doc.text(address || "", 17, 32);
+    doc.text(email || "", 17, 39);
+    doc.text(phone || "", 17, 46);
 
     // INVOICE INFO
     doc.setFontSize(13);
@@ -319,26 +314,26 @@ const PreviewTab = ({
       doc.text("BALANCE DUE", 195, 69, {
         align: "right",
       });
-      doc.text(`${currency} ${total.toFixed(2)}`, 195, 75, {
+      doc.text(`${code} ${total.toFixed(2)}`, 195, 75, {
         align: "right",
       });
     } else {
       doc.text("BALANCE DUE", 195, 53, {
         align: "right",
       });
-      doc.text(`${currency} ${total.toFixed(2)}`, 195, 59, {
+      doc.text(`${code} ${symbol} ${total.toFixed(2)}`, 195, 59, {
         align: "right",
       });
     }
 
     // BILL TO
     doc.setFontSize(11);
-    doc.text("BILL TO :", 18, 65);
+    doc.text("BILL TO :", 17, 65);
     doc.setFontSize(11);
-    doc.text(clientName || "", 18, 72);
-    doc.text(clientAddress || "", 18, 79);
-    doc.text(clientEmail || "", 18, 86);
-    doc.text(clientPhone || "", 18, 93);
+    doc.text(clientName || "", 17, 72);
+    doc.text(clientAddress || "", 17, 79);
+    doc.text(clientEmail || "", 17, 86);
+    doc.text(clientPhone || "", 17, 93);
 
     // ITEMS TABLE
     autoTable(doc, {
@@ -346,9 +341,9 @@ const PreviewTab = ({
       head: [["DESCRIPTION", "RATE", "QTY", "AMOUNT"]],
       body: items.map((item) => [
         item.description,
-        `${currency} ${item.price.toFixed(2)}`,
+        `${symbol} ${item.price.toFixed(2)}`,
         item.quantity,
-        `${currency} ${(item.quantity * item.price).toFixed(2)}`,
+        `${symbol} ${(item.quantity * item.price).toFixed(2)}`,
       ]),
       headStyles: {
         fillColor: headerColor,
@@ -360,10 +355,10 @@ const PreviewTab = ({
         textColor: [0, 0, 0],
       },
       columnStyles: {
-        0: { cellWidth: 100, halign: "left" },
-        1: { cellWidth: 30, halign: "right" },
+        0: { cellWidth: 95, halign: "left" },
+        1: { cellWidth: 35, halign: "right" },
         2: { cellWidth: 20, halign: "center" },
-        3: { cellWidth: 30, halign: "right" },
+        3: { cellWidth: 35, halign: "right" },
       },
       alternateRowStyles: { fillColor: lightBlue },
       theme: "plain",
@@ -373,25 +368,25 @@ const PreviewTab = ({
     let finalY = doc.lastAutoTable.finalY + 10;
     doc.setFontSize(11);
     doc.text("SUBTOTAL :", 90, finalY);
-    doc.text(`${subtotal.toFixed(2)}`, 194, finalY, {
+    doc.text(`${symbol} ${subtotal.toFixed(2)}`, 194, finalY, {
       align: "right",
     });
     doc.text(`TAX (${taxRate}%) :`, 90, finalY + 7);
-    doc.text(`${currency} ${taxAmount.toFixed(2)}`, 194, finalY + 7, {
+    doc.text(`${symbol} ${taxAmount.toFixed(2)}`, 194, finalY + 7, {
       align: "right",
     });
     if (discountAmount) {
       doc.text(`DISCOUNT (${discount}%) :`, 90, finalY + 14);
-      doc.text(`- ${currency} ${discountAmount.toFixed(2)}`, 194, finalY + 14, {
+      doc.text(`- ${symbol} ${discountAmount.toFixed(2)}`, 194, finalY + 14, {
         align: "right",
       });
       doc.text("TOTAL :", 90, finalY + 21);
-      doc.text(`${currency} ${total.toFixed(2)}`, 194, finalY + 21, {
+      doc.text(`${symbol} ${total.toFixed(2)}`, 194, finalY + 21, {
         align: "right",
       });
     } else {
       doc.text("TOTAL :", 90, finalY + 14);
-      doc.text(`${currency} ${total.toFixed(2)}`, 194, finalY + 14, {
+      doc.text(`${symbol} ${total.toFixed(2)}`, 194, finalY + 14, {
         align: "right",
       });
     }
@@ -406,7 +401,7 @@ const PreviewTab = ({
     setPdfUrl(URL.createObjectURL(pdfBlob));
   }, [
     invoiceNumber,
-    currency,
+    selectedCurrency,
     invoiceDate,
     dueDate,
     name,
@@ -439,7 +434,11 @@ const PreviewTab = ({
 
   return (
     <div>
-      <button onClick={downloadPDF} disabled={!pdfUrl}>
+      <button
+        onClick={downloadPDF}
+        disabled={!pdfUrl}
+        className="btn dwnld_btn"
+      >
         Download PDF
       </button>
 

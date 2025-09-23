@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import "./App.scss";
 import "bootstrap/dist/css/bootstrap.min.css";
 import InvoiceDetailsTab from "./components/InvoiceDetailsTab";
@@ -9,7 +9,6 @@ function App() {
   const [activeTab, setActiveTab] = useState("details");
 
   const [invoiceNumber, setInvoiceNumber] = useState("INV-2025-001");
-  const [currency, setCurrency] = useState("CAD ($)");
   const [invoiceDate, setInvoiceDate] = useState(
     new Date().toISOString().split("T")[0]
   );
@@ -30,6 +29,28 @@ function App() {
   const [notes, setNotes] = useState("");
   const [taxRate, setTaxRate] = useState(0);
   const [discount, setDiscount] = useState(0);
+
+  const [currencies, setCurrencies] = useState([]);
+  const [selectedCurrency, setSelectedCurrency] = useState("");
+  
+  useEffect(() => {
+    fetch(process.env.PUBLIC_URL + "/currencies.json")
+      .then((res) => {
+        if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
+        return res.json();
+      })
+      .then((data) => {
+        setCurrencies(data);
+
+        // 👇 set first currency as default
+        if (data.length > 0) {
+          setSelectedCurrency(data[0].code);
+        }
+      })
+      .catch((err) => {
+        console.error("Failed to load currencies:", err);
+      });
+  }, []);
 
   return (
     <div className="container-fluid py-2">
@@ -74,8 +95,10 @@ function App() {
           <InvoiceDetailsTab
             invoiceNumber={invoiceNumber}
             setInvoiceNumber={setInvoiceNumber}
-            currency={currency}
-            setCurrency={setCurrency}
+            currencies={currencies}
+            setCurrencies={setCurrencies}
+            selectedCurrency={selectedCurrency}
+            setSelectedCurrency={setSelectedCurrency}
             invoiceDate={invoiceDate}
             setInvoiceDate={setInvoiceDate}
             dueDate={dueDate}
@@ -117,7 +140,8 @@ function App() {
         {activeTab === "preview" && (
           <PreviewTab
             invoiceNumber={invoiceNumber}
-            currency={currency}
+            currencies={currencies}
+            selectedCurrency={selectedCurrency}
             invoiceDate={invoiceDate}
             dueDate={dueDate}
             name={name}
