@@ -1,6 +1,11 @@
 import React, { useState, useEffect } from "react";
 import "./App.scss";
 import "bootstrap/dist/css/bootstrap.min.css";
+import {
+  LiaFileInvoiceSolid,
+  LiaFileInvoiceDollarSolid,
+} from "react-icons/lia";
+
 import InvoiceDetailsTab from "./components/InvoiceDetailsTab";
 import ItemsTab from "./components/ItemsTab";
 import PreviewTab from "./components/PreviewTab";
@@ -32,7 +37,7 @@ function App() {
 
   const [currencies, setCurrencies] = useState([]);
   const [selectedCurrency, setSelectedCurrency] = useState("");
-  
+
   useEffect(() => {
     fetch(process.env.PUBLIC_URL + "/currencies.json")
       .then((res) => {
@@ -55,8 +60,11 @@ function App() {
   return (
     <div className="container-fluid py-2">
       <div className="p-4 rounded shadow">
-        <h2 className="text-primary">Invoice Generator Pro</h2>
-        <p>Create professional invoices in minutes</p>
+        <h2 className="maingHeading">
+          <LiaFileInvoiceDollarSolid className="logo" />
+          Invoice Generator
+        </h2>
+        <p className="slogan">Create professional invoices in minutes</p>
 
         <ul className="nav mb-4">
           <li className="nav-item">

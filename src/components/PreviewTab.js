@@ -57,13 +57,13 @@
 //       <div ref={divRef} className="container invoice_preview border">
 //         <div
 //           className="row"
-//           style={{ backgroundColor: "#516f82ff", height: "18px" }}
+//           style={{ backgroundColor: "rgba(88, 120, 140, 1)", height: "18px" }}
 //         ></div>
 //         <div className="row mb-5 from_row align-items-center">
 //           <div className="col text-start ">
 //             <p
 //               className="mb-2"
-//               style={{ fontSize: "30px", fontWeight: "600", color: "#434a4f" }}
+//               style={{ fontSize: "30px", fontWeight: "600", color: "rgba(67, 74, 79, 1)" }}
 //             >
 //               {name}
 //             </p>
@@ -121,7 +121,7 @@
 //           {/* <h6>Invoice Items</h6> */}
 //           <div className="row" style={{ overflowX: "auto" }}>
 //             <table className="mt-4">
-//               <thead style={{ backgroundColor: "#425f71" }}>
+//               <thead style={{ backgroundColor: "rgba(66, 88, 113, 1)" }}>
 //                 <tr>
 //                   <th
 //                     style={{
@@ -275,65 +275,74 @@ const PreviewTab = ({
     const doc = new jsPDF();
     const code = selectedCurrency.code || "";
     const symbol = selectedCurrency.symbol || "";
-    const headerColor = [41, 74, 107];
-    const lightBlue = [220, 230, 242];
+    const headerColor = [88, 120, 140];
+    const lightBlue = [206, 224, 234];
 
     // HEADER
     doc.setFillColor(...headerColor);
-    doc.rect(12, 7, 186, 3, "F");
+    doc.rect(11, 7, 188, 3, "F");
+
+    doc.setFillColor(240, 240, 240); 
+    doc.rect(11, 10, 188, 50, "F");
 
     // BILL FROM
-    doc.setFontSize(16);
-    doc.text(name || "Company Name", 17, 25);
-    doc.setFontSize(11);
-    doc.text(address || "", 17, 32);
-    doc.text(email || "", 17, 39);
-    doc.text(phone || "", 17, 46);
+    doc.setFont("helvetica", "bold"); 
+    doc.setFontSize(13);
+    doc.setTextColor(67, 74, 79);
+    doc.text(name || "Company Name", 15, 25);
+    doc.setFont("helvetica", "bold"); 
+    doc.setFontSize(10);
+    doc.text(address || "", 15, 34);
+    doc.text(email || "", 15, 40);
+    doc.text(phone || "", 15, 47);
 
     // INVOICE INFO
-    doc.setFontSize(13);
-    doc.text("INVOICE", 195, 20, {
+    doc.setFontSize(14);
+    doc.text("INVOICE", 195, 18, {
       align: "right",
     });
-    doc.setFontSize(11);
-    doc.text(invoiceNumber || "", 195, 26, {
+    doc.setFont("helvetica", "bold"); 
+    doc.setFontSize(10);
+    doc.text(invoiceNumber || "", 195, 25, {
       align: "right",
     });
-    doc.text("DATE", 195, 36, {
+    doc.text("DATE", 195, 35, {
       align: "right",
     });
-    doc.text(invoiceDate || "", 195, 43, {
+    doc.text(invoiceDate || "", 195, 41, {
       align: "right",
     });
 
     if (dueDate) {
-      doc.text("DUE", 195, 53, { align: "right" });
-      doc.text(dueDate, 195, 59, {
+      doc.text("DUE", 195, 52, { align: "right" });
+      doc.text(dueDate, 195, 57, {
         align: "right",
       });
-      doc.text("BALANCE DUE", 195, 69, {
+      doc.text("BALANCE DUE", 195, 68, {
         align: "right",
       });
-      doc.text(`${code} ${total.toFixed(2)}`, 195, 75, {
+      doc.text(`${code} ${total.toFixed(2)}`, 195, 73, {
         align: "right",
       });
     } else {
-      doc.text("BALANCE DUE", 195, 53, {
+      doc.text("BALANCE DUE", 195, 52, {
         align: "right",
       });
-      doc.text(`${code} ${symbol} ${total.toFixed(2)}`, 195, 59, {
+      doc.text(`${code} ${symbol} ${total.toFixed(2)}`, 195, 57, {
         align: "right",
       });
     }
 
     // BILL TO
+    doc.setFont("helvetica", "bold"); 
+    doc.setTextColor(67, 74, 79);
+    doc.text("BILL TO :", 15, 68);
     doc.setFontSize(11);
-    doc.text("BILL TO :", 17, 65);
-    doc.setFontSize(11);
-    doc.text(clientName || "", 17, 72);
-    doc.text(clientAddress || "", 17, 79);
-    doc.text(clientEmail || "", 17, 86);
-    doc.text(clientPhone || "", 17, 93);
+    doc.text(clientName || "", 15, 76);
+    doc.setFontSize(10);
+    doc.text(clientAddress || "", 15, 83);
+    doc.text(clientEmail || "", 15, 89);
+    doc.text(clientPhone || "", 15, 96);
 
     // ITEMS TABLE
     autoTable(doc, {
@@ -347,54 +356,83 @@ const PreviewTab = ({
       ]),
       headStyles: {
         fillColor: headerColor,
-        textColor: [0, 0, 0],
+        textColor: [247, 247, 247],
       },
+      margin: { left: 11, right: 11 },
+      tableWidth: "auto",
       styles: {
         fontSize: 10,
         cellPadding: 3,
         textColor: [0, 0, 0],
       },
       columnStyles: {
-        0: { cellWidth: 95, halign: "left" },
-        1: { cellWidth: 35, halign: "right" },
+        0: { cellWidth: 96, halign: "left" },
+        1: { cellWidth: 36, halign: "right" },
         2: { cellWidth: 20, halign: "center" },
-        3: { cellWidth: 35, halign: "right" },
+        3: { cellWidth: 36, halign: "right" },
       },
-      alternateRowStyles: { fillColor: lightBlue },
+      didParseCell: function (data) {
+    // Apply alternate background starting from 2nd row
+    if (data.section === 'body' && data.row.index % 2 === 1) {
+      data.cell.styles.fillColor = [204, 220, 229]; // light gray
+    }
+  },
+      // alternateRowStyles: { fillColor: [204, 220, 229] },
       theme: "plain",
     });
 
     // SUMMARY
-    let finalY = doc.lastAutoTable.finalY + 10;
-    doc.setFontSize(11);
-    doc.text("SUBTOTAL :", 90, finalY);
-    doc.text(`${symbol} ${subtotal.toFixed(2)}`, 194, finalY, {
+    let finalY = doc.lastAutoTable.finalY + 8;
+    doc.setFont("helvetica", "bold"); 
+    doc.setFontSize(10);
+    doc.text("SUBTOTAL :", 93, finalY);
+    doc.text(`${symbol} ${subtotal.toFixed(2)}`, 197, finalY, {
       align: "right",
     });
-    doc.text(`TAX (${taxRate}%) :`, 90, finalY + 7);
-    doc.text(`${symbol} ${taxAmount.toFixed(2)}`, 194, finalY + 7, {
+    doc.text(`TAX (${taxRate}%) :`, 93, finalY + 7);
+    doc.text(`${symbol} ${taxAmount.toFixed(2)}`, 197, finalY + 7, {
       align: "right",
     });
     if (discountAmount) {
-      doc.text(`DISCOUNT (${discount}%) :`, 90, finalY + 14);
-      doc.text(`- ${symbol} ${discountAmount.toFixed(2)}`, 194, finalY + 14, {
+      doc.text(`DISCOUNT (${discount}%) :`, 93, finalY + 14);
+      doc.text(`- ${symbol} ${discountAmount.toFixed(2)}`, 197, finalY + 14, {
         align: "right",
       });
-      doc.text("TOTAL :", 90, finalY + 21);
-      doc.text(`${symbol} ${total.toFixed(2)}`, 194, finalY + 21, {
+      doc.text("TOTAL :", 93, finalY + 21);
+      doc.text(`${symbol} ${total.toFixed(2)}`, 197, finalY + 21, {
+        align: "right",
+      });
+       doc.setFontSize(11);
+       doc.setFillColor(206, 224, 234); 
+       doc.rect(91, finalY + 24, 108, 9, "F"); 
+       doc.setFont("helvetica", "bold");
+      doc.text("BALANCE DUE :", 93, finalY + 29);
+      doc.text(`${symbol} ${total.toFixed(2)}`, 197, finalY + 29, {
         align: "right",
       });
     } else {
-      doc.text("TOTAL :", 90, finalY + 14);
-      doc.text(`${symbol} ${total.toFixed(2)}`, 194, finalY + 14, {
+       doc.setFontSize(10);
+      doc.text("TOTAL :", 93, finalY + 13);
+      doc.text(`${symbol} ${total.toFixed(2)}`, 197, finalY + 13, {
+        align: "right",
+      });
+      doc.setFillColor(206, 224, 234); // light blue background (R,G,B)
+      doc.rect(91, finalY + 16, 108, 9, "F"); // x, y, width, height, "F" = fill
+      doc.setFont("helvetica", "bold"); // default
+      doc.setFontSize(11);
+      doc.text("BALANCE DUE :", 93, finalY + 21);
+      doc.text(`${symbol} ${total.toFixed(2)}`, 197, finalY + 21, {
         align: "right",
       });
     }
+    
 
     // NOTES
     doc.setFontSize(10);
-    doc.text("Additional Notes", 20, finalY + 40);
-    doc.text(notes || "", 20, finalY + 47);
+    doc.setFont("helvetica", "bold"); 
+    doc.text("Additional Notes:", 15, finalY + 45);
+    doc.setFont("helvetica", "normal"); 
+    doc.text(notes || "", 15, finalY + 51);
 
     // PREVIEW URL
     const pdfBlob = doc.output("blob");

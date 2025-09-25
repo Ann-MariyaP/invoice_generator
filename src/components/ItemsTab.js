@@ -39,7 +39,7 @@ const ItemsTab = ({
 
   return (
     <div>
-      <h5 className="mb-3">Invoice Items</h5>
+      <h5 className="mb-3 labels">Invoice Items</h5>
       <table className="table table-bordered bg-light">
         <thead className="table-secondary">
           <tr>
@@ -101,7 +101,7 @@ const ItemsTab = ({
       </button>
 
       <div className="mb-4">
-        <h6>Additional Notes</h6>
+        <h6 className="labels">Additional Notes</h6>
         <textarea
           className="form-control"
           placeholder="Payment terms, delivery info, etc."
@@ -113,7 +113,7 @@ const ItemsTab = ({
 
       <div className="row mb-4">
         <div className="col-md-6">
-          <label>Tax Rate (%)</label>
+          <label className="labels">Tax Rate (%)</label>
           <input
             type="number"
             className="form-control"
@@ -122,7 +122,7 @@ const ItemsTab = ({
           />
         </div>
         <div className="col-md-6">
-          <label>Discount (%)</label>
+          <label className="labels">Discount (%)</label>
           <input
             type="number"
             className="form-control"
@@ -133,14 +133,14 @@ const ItemsTab = ({
       </div>
 
       <div className="p-3 bg-light rounded mb-4">
-        <p>Subtotal: ${subtotal.toFixed(2)}</p>
-        <p>
+        <p className="labels">Subtotal: ${subtotal.toFixed(2)}</p>
+        <p className="labels">
           Tax ({taxRate}%): ${taxAmount.toFixed(2)}
         </p>
-        <p>
+        <p className="labels">
           Discount ({discount}%): -${discountAmount.toFixed(2)}
         </p>
-        <h5>Total: ${total.toFixed(2)}</h5>
+        <h5 className="labels">Total: ${total.toFixed(2)}</h5>
       </div>
 
       <div className="d-flex justify-content-between">

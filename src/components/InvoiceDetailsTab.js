@@ -32,11 +32,11 @@ const InvoiceDetailsTab = ({
 }) => {
   return (
     <div>
-      <h5 className="mb-3">Invoice Details</h5>
+      <h5 className="mb-3 labels">Invoice Details</h5>
 
       <div className="row mb-3">
         <div className="col-md-6">
-          <label>Invoice Number</label>
+          <label className="labels">Invoice Number</label>
           <input
             type="text"
             className="form-control"
@@ -45,31 +45,29 @@ const InvoiceDetailsTab = ({
           />
         </div>
         <div className="col-md-6">
-          <label>Currency</label>
-          
+          <label className="labels">Currency</label>
+
           <select
             className="form-control"
-            value={selectedCurrency?.code || ''}
-            onChange={(e)=>{
+            value={selectedCurrency?.code || ""}
+            onChange={(e) => {
               const code = e.target.value;
-              const currency = currencies.find(c=>c.code === code);
+              const currency = currencies.find((c) => c.code === code);
               setSelectedCurrency(currency || null);
             }}
           >
-            
-            {currencies.map((currency)=>(
-              <option key={currency.code} value={
-                currency.code
-              }>{currency.code} ({currency.symbol})</option>
+            {currencies.map((currency) => (
+              <option key={currency.code} value={currency.code}>
+                {currency.code} ({currency.symbol})
+              </option>
             ))}
-          
           </select>
         </div>
       </div>
 
       <div className="row mb-3">
         <div className="col-md-6">
-          <label>Invoice Date</label>
+          <label className="labels">Invoice Date</label>
           <input
             type="date"
             className="form-control"
@@ -78,7 +76,7 @@ const InvoiceDetailsTab = ({
           />
         </div>
         <div className="col-md-6">
-          <label>Due Date</label>
+          <label className="labels">Due Date</label>
           <input
             type="date"
             className="form-control"
@@ -90,10 +88,10 @@ const InvoiceDetailsTab = ({
 
       <hr />
 
-      <h6 className="mb-3">Your Information </h6>
+      <h6 className="mb-3 labels">Your Information </h6>
       <div className="row mb-3">
         <div className="col-md-6">
-          <label>Name/Bussiness Name</label>
+          <label className="labels">Name/Bussiness Name</label>
           <input
             type="text"
             className="form-control"
@@ -102,7 +100,7 @@ const InvoiceDetailsTab = ({
           />
         </div>
         <div className="col-md-6">
-          <label>Email</label>
+          <label className="labels">Email</label>
           <input
             type="email"
             className="form-control"
@@ -113,7 +111,7 @@ const InvoiceDetailsTab = ({
       </div>
       <div className="row mb-3">
         <div className="col-md-6">
-          <label>Phone</label>
+          <label className="labels">Phone</label>
           <input
             type="tel"
             className="form-control"
@@ -122,7 +120,7 @@ const InvoiceDetailsTab = ({
           />
         </div>
         <div className="col-md-6">
-          <label>Address</label>
+          <label className="labels">Address</label>
           <textarea
             className="form-control"
             rows="3"
@@ -134,10 +132,10 @@ const InvoiceDetailsTab = ({
 
       <hr />
 
-      <h6 className="mb-3">Client Information </h6>
+      <h6 className="mb-3 labels">Client Information </h6>
       <div className="row mb-3">
         <div className="col-md-6">
-          <label>Client Name</label>
+          <label className="labels">Client Name</label>
           <input
             type="text"
             className="form-control"
@@ -146,7 +144,7 @@ const InvoiceDetailsTab = ({
           />
         </div>
         <div className="col-md-6">
-          <label>Email</label>
+          <label className="labels">Email</label>
           <input
             type="email"
             className="form-control"
@@ -157,7 +155,7 @@ const InvoiceDetailsTab = ({
       </div>
       <div className="row mb-3">
         <div className="col-md-6">
-          <label>Phone</label>
+          <label className="labels">Phone</label>
           <input
             type="tel"
             className="form-control"
@@ -166,7 +164,7 @@ const InvoiceDetailsTab = ({
           />
         </div>
         <div className="col-md-6">
-          <label>Address</label>
+          <label className="labels">Address</label>
           <textarea
             className="form-control"
             rows="3"
