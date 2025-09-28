@@ -269,96 +269,96 @@ const PreviewTab = ({
 
   useEffect(() => {
     const doc = new jsPDF();
-    const addIconWithText = async (
-      IconComponent,
-      label,
-      x,
-      y,
-      size = 40,
-      color = "#61DAFB"
-    ) => {
-      // Render icon to SVG string
-      const svgString = ReactDOMServer.renderToStaticMarkup(
-        <IconComponent size={size} color={color} />
-      );
-
-      const svgBlob = new Blob([svgString], { type: "image/svg+xml" });
-      const url = URL.createObjectURL(svgBlob);
-      const img = new Image();
-      img.src = url;
-
-      await new Promise((resolve) => {
-        img.onload = () => {
-          // Add icon image
-          doc.addImage(img, "PNG", x, y, size, size);
-
-          // Add text next to icon
-          doc.text(label, x + size + 5, y + size / 1.5);
-
-          URL.revokeObjectURL(url);
-          resolve();
-        };
-      });
-    };
+    const pageHeight = doc.internal.pageSize.height;
+    const margin = 9; // get page height
 
     const code = selectedCurrency.code || "";
     const symbol = selectedCurrency.symbol || "";
     const headerColor = [88, 120, 140];
-    const lightBlue = [206, 224, 234];
+    const mainText = [67, 74, 79];
 
-    // HEADER
     doc.setFillColor(...headerColor);
-    doc.rect(11, 7, 188, 3, "F");
+    doc.rect(11, margin, 188, 3, "F");
+    // HEADER
+    const addHeader = () => {
+      doc.setFillColor(...headerColor);
+      doc.rect(11, margin, 188, 3, "F");
+      doc.setFont("helvetica", "normal");
+      doc.setFontSize(9);
+      doc.setTextColor(...mainText)
+      doc.text(name || "Company Name", 11, margin+7);
+      doc.setFontSize(9);
+      doc.text(invoiceNumber || "", 179, margin+7);
+    };
+
+    // Footer function
+    const addFooter = (i, totalPages) => {
+      doc.setFillColor(...headerColor);
+      doc.rect(11, pageHeight - 15, 188, 0.2, "F");
+      doc.setFont("helvetica", "normal");
+      doc.setFontSize(9);
+      doc.text(`Page ${i} of ${totalPages}`, 105, pageHeight - 10, {
+        align: "center",
+      });
+      doc.setFontSize(7);
+      doc.text("Thank you for your business!", 199, pageHeight - 12, {
+        align: "right",
+      });
+    };
 
     doc.setFillColor(240, 240, 240);
-    doc.rect(11, 10, 188, dueDate ? 61 : 50, "F");
-
+    doc.rect(11, margin+3, 188, dueDate ? 61 : 50, "F");
     // BILL FROM
     doc.setFont("helvetica", "bold");
     doc.setFontSize(13);
     doc.setTextColor(67, 74, 79);
-    doc.text(name || "Company Name", 15, 25);
+    doc.text(name || "Company Name", 15, margin + 17);
     doc.setFont("helvetica", "bold");
     doc.setFontSize(10);
-    doc.text(address || "", 15, 34);
-    doc.text(email || "", 15, 40);
-    doc.text(phone || "", 15, 47);
+    doc.text(address || "", 15, margin+25);
+    doc.text(email || "", 15, margin+31);
+    doc.text(phone || "", 15, margin+38);
 
     // INVOICE INFO
     doc.setFontSize(14);
-    doc.text("INVOICE", 195, 18, {
+    doc.text("INVOICE", 195, margin+10, {
       align: "right",
     });
     doc.setFont("helvetica", "bold");
     doc.setFontSize(10);
-    doc.text(invoiceNumber || "", 195, 25, {
+    doc.text(invoiceNumber || "", 195, margin+16, {
       align: "right",
     });
-    doc.text("DATE", 195, 34, {
+    doc.text("DATE", 195, margin + 25, {
       align: "right",
     });
-    doc.text(invoiceDate || "", 195, 40, {
+    doc.text(invoiceDate || "", 195, margin + 31, {
       align: "right",
     });
-    doc.text(dueDate ? "DUE" : "", 195, 48, { align: "right" });
-    doc.text(dueDate || "", 195, 53, { align: "right" });
-    doc.text("BALANCE DUE", 195, dueDate ? 62 : 50, { align: "right" });
-    doc.text(`${code} ${total.toFixed(2)}`, 195, dueDate ? 67 : 55, {
+    doc.text(dueDate ? "DUE" : "", 195, margin + 39, { align: "right" });
+    doc.text(dueDate || "", 195, margin + 44, { align: "right" });
+    doc.text("BALANCE DUE", 195, dueDate ? margin + 53 : margin + 41, {
       align: "right",
     });
+    doc.text(
+      `${code} ${total.toFixed(2)}`,
+      195,
+      dueDate ? margin + 58 : margin + 46,
+      {
+        align: "right",
+      }
+    );
 
     // BILL TO
-    doc.setFont("helvetica", "bold");
-    doc.setTextColor(67, 74, 79);
+    //  doc.setFont("helvetica", "bold");
+    //  doc.setTextColor(67, 74, 79);
     doc.setFontSize(9);
     doc.text("BILL TO :", 15, dueDate ? 79 : 70);
     doc.setFontSize(11);
     doc.text(clientName || "", 15, dueDate ? 87 : 78);
     doc.setFontSize(10);
     doc.text(clientAddress || "", 15, dueDate ? 94 : 85);
-    doc.setFontSize(10);
     doc.text(clientEmail || "", 15, dueDate ? 100 : 91);
-    doc.setFontSize(10);
     doc.text(clientPhone || "", 15, dueDate ? 106 : 98);
 
     //   // Add email and phone icons + text
@@ -370,7 +370,7 @@ const PreviewTab = ({
 
     // ITEMS TABLE
     autoTable(doc, {
-      startY: dueDate ? 116 : 110,
+      startY: dueDate ? margin + 105 : margin + 100,
       head: [
         [
           { content: "DESCRIPTION", styles: { halign: "left" } },
@@ -389,7 +389,7 @@ const PreviewTab = ({
         fillColor: headerColor,
         textColor: [247, 247, 247],
       },
-      margin: { left: 11, right: 11 },
+      margin: { left: 11, right: 11,top:20 },
       tableWidth: "auto",
       styles: {
         fontSize: 10,
@@ -408,10 +408,31 @@ const PreviewTab = ({
         }
       },
       theme: "plain",
+      didDrawPage: function () {
+        const pageNumber = doc.getCurrentPageInfo().pageNumber;
+        if (pageNumber > 1) addHeader();
+        
+      },
     });
-
+    
+          let finalY1 = doc.lastAutoTable.finalY + 6;
+          doc.setTextColor(206, 224, 234);
+          doc.setFont("helvetica", "normal");
+          doc.setFontSize(9);
+          doc.text("* Indicates non-taxable line item", 11, finalY1);
+     
     // SUMMARY
     let finalY = doc.lastAutoTable.finalY + 8;
+    const summaryHeight = 60;
+
+    // If summary won't fit, add a new page
+    if (finalY + summaryHeight > pageHeight - 30) {
+      doc.addPage();
+      addHeader();
+      finalY = 25; // reset to top margin of new page
+      
+    }
+    doc.setTextColor(...mainText);
     doc.setFont("helvetica", "bold");
     doc.setFontSize(10);
     doc.text("SUBTOTAL :", 93, finalY);
@@ -459,11 +480,28 @@ const PreviewTab = ({
     );
 
     // NOTES
-    doc.setFontSize(10);
+    let notesY = discountAmount ? finalY + 45 : finalY + 38;
+    if (notesY + 30 > pageHeight - 20) {
+      doc.addPage();
+      addHeader();
+      notesY = 30;
+    }
+
+    doc.setFontSize(11);
     doc.setFont("helvetica", "bold");
-    doc.text("Additional Notes:", 15, finalY + 45);
+    doc.text("Additional Notes:", 15, notesY + 2);
     doc.setFont("helvetica", "normal");
-    doc.text(notes || "", 15, finalY + 51);
+    doc.text(notes || "", 15, notesY + 8);
+
+  
+    // ------------------------
+    // FOOTERS AFTER ALL CONTENT
+    // ------------------------
+    const totalPages = doc.getNumberOfPages();
+    for (let i = 1; i <= totalPages; i++) {
+      doc.setPage(i);
+      addFooter(i, totalPages);
+    }
 
     // PREVIEW URL
     const pdfBlob = doc.output("blob");
