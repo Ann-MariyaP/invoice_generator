@@ -222,12 +222,14 @@
 
 import "./design.scss";
 
-import React, { useEffect, useState } from "react";
-import ReactDOMServer from "react-dom/server";
+import React, { useEffect, useState,useRef } from "react";
 import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
 import { FaSquarePhone } from "react-icons/fa6";
 import { TfiEmail } from "react-icons/tfi";
+import emailIcon from "../assets/gmail.png";
+import phoneIcon from "../assets/phone.png";
+import locationIcon from "../assets/location.png"
 
 const PreviewTab = ({
   invoiceNumber,
@@ -267,245 +269,244 @@ const PreviewTab = ({
     };
   }, [pdfUrl]);
 
+
+
   useEffect(() => {
-    const doc = new jsPDF();
-    const pageHeight = doc.internal.pageSize.height;
-    const margin = 9; // get page height
+    const generatePDF = async () => {
+      const doc = new jsPDF();
+      const pageHeight = doc.internal.pageSize.height;
+      const margin = 9; // get page height
 
-    const code = selectedCurrency.code || "";
-    const symbol = selectedCurrency.symbol || "";
-    const headerColor = [88, 120, 140];
-    const mainText = [67, 74, 79];
+      const code = selectedCurrency.code || "";
+      const symbol = selectedCurrency.symbol || "";
+      const headerColor = [88, 120, 140];
+      const mainText = [67, 74, 79];
 
-    doc.setFillColor(...headerColor);
-    doc.rect(11, margin, 188, 3, "F");
-    // HEADER
-    const addHeader = () => {
       doc.setFillColor(...headerColor);
       doc.rect(11, margin, 188, 3, "F");
-      doc.setFont("helvetica", "normal");
-      doc.setFontSize(9);
-      doc.setTextColor(...mainText)
-      doc.text(name || "Company Name", 11, margin+7);
-      doc.setFontSize(9);
-      doc.text(invoiceNumber || "", 179, margin+7);
-    };
+      // HEADER
+      const addHeader = () => {
+        doc.setFillColor(...headerColor);
+        doc.rect(11, margin, 188, 3, "F");
+        doc.setFont("helvetica", "normal");
+        doc.setFontSize(9);
+        doc.setTextColor(...mainText);
+        doc.text(name || "Company Name", 11, margin + 7);
+        doc.setFontSize(9);
+        doc.text(invoiceNumber || "", 179, margin + 7);
+      };
 
-    // Footer function
-    const addFooter = (i, totalPages) => {
-      doc.setFillColor(...headerColor);
-      doc.rect(11, pageHeight - 15, 188, 0.2, "F");
-      doc.setFont("helvetica", "normal");
-      doc.setFontSize(9);
-      doc.text(`Page ${i} of ${totalPages}`, 105, pageHeight - 10, {
-        align: "center",
-      });
-      doc.setFontSize(7);
-      doc.text("Thank you for your business!", 199, pageHeight - 12, {
+      // Footer function
+      const addFooter = (i, totalPages) => {
+        doc.setFillColor(...headerColor);
+        doc.rect(11, pageHeight - 15, 188, 0.2, "F");
+        doc.setFont("helvetica", "normal");
+        doc.setFontSize(9);
+        doc.text(`Page ${i} of ${totalPages}`, 105, pageHeight - 10, {
+          align: "center",
+        });
+        doc.setFontSize(7);
+        doc.text("Thank you for your business!", 199, pageHeight - 12, {
+          align: "right",
+        });
+      };
+
+      doc.setFillColor(240, 240, 240);
+      doc.rect(11, margin + 3, 188, dueDate ? 61 : 50, "F");
+      // BILL FROM
+      doc.setFont("helvetica", "bold");
+      doc.setFontSize(13);
+      doc.setTextColor(67, 74, 79);
+      doc.text(name || "Company Name", 15, margin + 17);
+      doc.setFont("helvetica", "bold");
+      doc.setFontSize(10);
+      doc.text(address || "", 15, margin + 25);
+      doc.text(email || "", 15, margin + 31);
+      doc.text(phone || "", 15, margin + 38);
+
+      // INVOICE INFO
+      doc.setFontSize(14);
+      doc.text("INVOICE", 195, margin + 10, {
         align: "right",
       });
-    };
-
-    doc.setFillColor(240, 240, 240);
-    doc.rect(11, margin+3, 188, dueDate ? 61 : 50, "F");
-    // BILL FROM
-    doc.setFont("helvetica", "bold");
-    doc.setFontSize(13);
-    doc.setTextColor(67, 74, 79);
-    doc.text(name || "Company Name", 15, margin + 17);
-    doc.setFont("helvetica", "bold");
-    doc.setFontSize(10);
-    doc.text(address || "", 15, margin+25);
-    doc.text(email || "", 15, margin+31);
-    doc.text(phone || "", 15, margin+38);
-
-    // INVOICE INFO
-    doc.setFontSize(14);
-    doc.text("INVOICE", 195, margin+10, {
-      align: "right",
-    });
-    doc.setFont("helvetica", "bold");
-    doc.setFontSize(10);
-    doc.text(invoiceNumber || "", 195, margin+16, {
-      align: "right",
-    });
-    doc.text("DATE", 195, margin + 25, {
-      align: "right",
-    });
-    doc.text(invoiceDate || "", 195, margin + 31, {
-      align: "right",
-    });
-    doc.text(dueDate ? "DUE" : "", 195, margin + 39, { align: "right" });
-    doc.text(dueDate || "", 195, margin + 44, { align: "right" });
-    doc.text("BALANCE DUE", 195, dueDate ? margin + 53 : margin + 41, {
-      align: "right",
-    });
-    doc.text(
-      `${code} ${total.toFixed(2)}`,
-      195,
-      dueDate ? margin + 58 : margin + 46,
-      {
+      doc.setFont("helvetica", "bold");
+      doc.setFontSize(10);
+      doc.text(invoiceNumber || "", 195, margin + 16, {
         align: "right",
-      }
-    );
-
-    // BILL TO
-    //  doc.setFont("helvetica", "bold");
-    //  doc.setTextColor(67, 74, 79);
-    doc.setFontSize(9);
-    doc.text("BILL TO :", 15, dueDate ? 79 : 70);
-    doc.setFontSize(11);
-    doc.text(clientName || "", 15, dueDate ? 87 : 78);
-    doc.setFontSize(10);
-    doc.text(clientAddress || "", 15, dueDate ? 94 : 85);
-    doc.text(clientEmail || "", 15, dueDate ? 100 : 91);
-    doc.text(clientPhone || "", 15, dueDate ? 106 : 98);
-
-    //   // Add email and phone icons + text
-    // const emailY = dueDate ? 98 : 91;
-    // const phoneY = dueDate ? 104 : 98;
-
-    // addIconNextToText(TfiEmail, clientEmail, 15, emailY, 6, "#007BFF").then(() =>
-    //   addIconNextToText(FaPhone, clientPhone, 15, phoneY, 6, "#28A745").then(() => {
-
-    // ITEMS TABLE
-    autoTable(doc, {
-      startY: dueDate ? margin + 105 : margin + 100,
-      head: [
-        [
-          { content: "DESCRIPTION", styles: { halign: "left" } },
-          { content: "RATE", styles: { halign: "right" } },
-          { content: "QTY", styles: { halign: "center" } },
-          { content: "AMOUNT", styles: { halign: "right" } },
-        ],
-      ],
-      body: items.map((item) => [
-        item.description,
-        `${symbol} ${item.price.toFixed(2)}`,
-        item.quantity,
-        `${symbol} ${(item.quantity * item.price).toFixed(2)}`,
-      ]),
-      headStyles: {
-        fillColor: headerColor,
-        textColor: [247, 247, 247],
-      },
-      margin: { left: 11, right: 11,top:20 },
-      tableWidth: "auto",
-      styles: {
-        fontSize: 10,
-        cellPadding: 3,
-        textColor: [0, 0, 0],
-      },
-      columnStyles: {
-        0: { cellWidth: 96, halign: "left" },
-        1: { cellWidth: 36, halign: "right" },
-        2: { cellWidth: 20, halign: "center" },
-        3: { cellWidth: 36, halign: "right" },
-      },
-      didParseCell: function (data) {
-        if (data.section === "body" && data.row.index % 2 === 1) {
-          data.cell.styles.fillColor = [204, 220, 229];
+      });
+      doc.text("DATE", 195, margin + 25, {
+        align: "right",
+      });
+      doc.text(invoiceDate || "", 195, margin + 31, {
+        align: "right",
+      });
+      doc.text(dueDate ? "DUE" : "", 195, margin + 39, { align: "right" });
+      doc.text(dueDate || "", 195, margin + 44, { align: "right" });
+      doc.text("BALANCE DUE", 195, dueDate ? margin + 53 : margin + 41, {
+        align: "right",
+      });
+      doc.text(
+        `${code} ${total.toFixed(2)}`,
+        195,
+        dueDate ? margin + 58 : margin + 46,
+        {
+          align: "right",
         }
-      },
-      theme: "plain",
-      didDrawPage: function () {
-        const pageNumber = doc.getCurrentPageInfo().pageNumber;
-        if (pageNumber > 1) addHeader();
-        
-      },
-    });
+      );
+
+      // BILL TO
+      doc.setFontSize(9);
+      doc.text("BILL TO :", 15, dueDate ? 79 : 70);
+      doc.setFontSize(11);
+      doc.text(clientName || "", 15, dueDate ? 87 : 78);
+      doc.setFontSize(10);
+       doc.addImage(locationIcon, "PNG", 15, dueDate ? 91 : 82, 4, 4);
+      doc.text(clientAddress || "", 20, dueDate ? 94 : 85);
+      // --- 3. Add icon to PDF ---
+      doc.addImage(emailIcon, "PNG", 15, dueDate ? 97 : 88, 4, 4);
+      doc.text(clientEmail || "", 20, dueDate ? 100 : 91);
+      doc.addImage(phoneIcon, "PNG", 15, dueDate ? 103 : 95, 4, 4);
+      doc.text(clientPhone || "", 20, dueDate ? 106 : 98);
+
     
-          let finalY1 = doc.lastAutoTable.finalY + 6;
-          doc.setTextColor(206, 224, 234);
-          doc.setFont("helvetica", "normal");
-          doc.setFontSize(9);
-          doc.text("* Indicates non-taxable line item", 11, finalY1);
-     
-    // SUMMARY
-    let finalY = doc.lastAutoTable.finalY + 8;
-    const summaryHeight = 60;
 
-    // If summary won't fit, add a new page
-    if (finalY + summaryHeight > pageHeight - 30) {
-      doc.addPage();
-      addHeader();
-      finalY = 25; // reset to top margin of new page
-      
-    }
-    doc.setTextColor(...mainText);
-    doc.setFont("helvetica", "bold");
-    doc.setFontSize(10);
-    doc.text("SUBTOTAL :", 93, finalY);
-    doc.text(`${symbol} ${subtotal.toFixed(2)}`, 197, finalY, {
-      align: "right",
-    });
-    doc.text(`TAX (${taxRate}%) :`, 93, finalY + 7);
-    doc.text(`${symbol} ${taxAmount.toFixed(2)}`, 197, finalY + 7, {
-      align: "right",
-    });
-    doc.text(
-      discountAmount ? `DISCOUNT (${discount}%) :` : "",
-      93,
-      finalY + 14
-    );
-    doc.text(
-      discountAmount ? `- ${symbol} ${discountAmount.toFixed(2)}` : "",
-      197,
-      finalY + 14,
-      {
-        align: "right",
+      // ITEMS TABLE
+      autoTable(doc, {
+        startY: dueDate ? margin + 105 : margin + 100,
+        head: [
+          [
+            { content: "DESCRIPTION", styles: { halign: "left" } },
+            { content: "RATE", styles: { halign: "right" } },
+            { content: "QTY", styles: { halign: "center" } },
+            { content: "AMOUNT", styles: { halign: "right" } },
+          ],
+        ],
+        body: items.map((item) => [
+          item.description,
+          `${symbol} ${item.price.toFixed(2)}`,
+          item.quantity,
+          `${symbol} ${(item.quantity * item.price).toFixed(2)}`,
+        ]),
+        headStyles: {
+          fillColor: headerColor,
+          textColor: [247, 247, 247],
+        },
+        margin: { left: 11, right: 11, top: 20 },
+        tableWidth: "auto",
+        styles: {
+          fontSize: 10,
+          cellPadding: 3,
+          textColor: [0, 0, 0],
+        },
+        columnStyles: {
+          0: { cellWidth: 96, halign: "left" },
+          1: { cellWidth: 36, halign: "right" },
+          2: { cellWidth: 20, halign: "center" },
+          3: { cellWidth: 36, halign: "right" },
+        },
+        didParseCell: function (data) {
+          if (data.section === "body" && data.row.index % 2 === 1) {
+            data.cell.styles.fillColor = [204, 220, 229];
+          }
+        },
+        theme: "plain",
+        didDrawPage: function () {
+          const pageNumber = doc.getCurrentPageInfo().pageNumber;
+          if (pageNumber > 1) addHeader();
+        },
+      });
+
+      let finalY1 = doc.lastAutoTable.finalY + 6;
+      doc.setTextColor(206, 224, 234);
+      doc.setFont("helvetica", "normal");
+      doc.setFontSize(9);
+      doc.text("* Indicates non-taxable line item", 11, finalY1);
+
+      // SUMMARY
+      let finalY = doc.lastAutoTable.finalY + 8;
+      const summaryHeight = 60;
+
+      // If summary won't fit, add a new page
+      if (finalY + summaryHeight > pageHeight - 30) {
+        doc.addPage();
+        addHeader();
+        finalY = 25; // reset to top margin of new page
       }
-    );
-    doc.text("TOTAL :", 93, discountAmount ? finalY + 21 : finalY + 14);
-    doc.text(
-      `${symbol} ${total.toFixed(2)}`,
-      197,
-      discountAmount ? finalY + 21 : finalY + 14,
-      {
+      doc.setTextColor(...mainText);
+      doc.setFont("helvetica", "bold");
+      doc.setFontSize(10);
+      doc.text("SUBTOTAL :", 93, finalY);
+      doc.text(`${symbol} ${subtotal.toFixed(2)}`, 197, finalY, {
         align: "right",
-      }
-    );
-    doc.setFontSize(11);
-    doc.setFillColor(206, 224, 234);
-    doc.rect(91, discountAmount ? finalY + 24 : finalY + 17, 108, 9, "F");
-    doc.setFont("helvetica", "bold");
-    doc.text("BALANCE DUE :", 93, discountAmount ? finalY + 30 : finalY + 23);
-    doc.text(
-      `${symbol} ${total.toFixed(2)}`,
-      197,
-      discountAmount ? finalY + 30 : finalY + 23,
-      {
+      });
+      doc.text(`TAX (${taxRate}%) :`, 93, finalY + 7);
+      doc.text(`${symbol} ${taxAmount.toFixed(2)}`, 197, finalY + 7, {
         align: "right",
+      });
+      doc.text(
+        discountAmount ? `DISCOUNT (${discount}%) :` : "",
+        93,
+        finalY + 14
+      );
+      doc.text(
+        discountAmount ? `- ${symbol} ${discountAmount.toFixed(2)}` : "",
+        197,
+        finalY + 14,
+        {
+          align: "right",
+        }
+      );
+      doc.text("TOTAL :", 93, discountAmount ? finalY + 21 : finalY + 14);
+      doc.text(
+        `${symbol} ${total.toFixed(2)}`,
+        197,
+        discountAmount ? finalY + 21 : finalY + 14,
+        {
+          align: "right",
+        }
+      );
+      doc.setFontSize(11);
+      doc.setFillColor(206, 224, 234);
+      doc.rect(91, discountAmount ? finalY + 24 : finalY + 17, 108, 9, "F");
+      doc.setFont("helvetica", "bold");
+      doc.text("BALANCE DUE :", 93, discountAmount ? finalY + 30 : finalY + 23);
+      doc.text(
+        `${symbol} ${total.toFixed(2)}`,
+        197,
+        discountAmount ? finalY + 30 : finalY + 23,
+        {
+          align: "right",
+        }
+      );
+
+      // NOTES
+      let notesY = discountAmount ? finalY + 45 : finalY + 38;
+      if (notesY + 30 > pageHeight - 20) {
+        doc.addPage();
+        addHeader();
+        notesY = 30;
       }
-    );
 
-    // NOTES
-    let notesY = discountAmount ? finalY + 45 : finalY + 38;
-    if (notesY + 30 > pageHeight - 20) {
-      doc.addPage();
-      addHeader();
-      notesY = 30;
-    }
+      doc.setFontSize(11);
+      doc.setFont("helvetica", "bold");
+      doc.text("Additional Notes:", 15, notesY + 2);
+      doc.setFont("helvetica", "normal");
+      doc.text(notes || "", 15, notesY + 8);
 
-    doc.setFontSize(11);
-    doc.setFont("helvetica", "bold");
-    doc.text("Additional Notes:", 15, notesY + 2);
-    doc.setFont("helvetica", "normal");
-    doc.text(notes || "", 15, notesY + 8);
+      // ------------------------
+      // FOOTERS AFTER ALL CONTENT
+      // ------------------------
+      const totalPages = doc.getNumberOfPages();
+      for (let i = 1; i <= totalPages; i++) {
+        doc.setPage(i);
+        addFooter(i, totalPages);
+      }
 
-  
-    // ------------------------
-    // FOOTERS AFTER ALL CONTENT
-    // ------------------------
-    const totalPages = doc.getNumberOfPages();
-    for (let i = 1; i <= totalPages; i++) {
-      doc.setPage(i);
-      addFooter(i, totalPages);
-    }
-
-    // PREVIEW URL
-    const pdfBlob = doc.output("blob");
-    setPdfUrl(URL.createObjectURL(pdfBlob));
+      // PREVIEW URL
+      const pdfBlob = doc.output("blob");
+      setPdfUrl(URL.createObjectURL(pdfBlob));
+    };
+    generatePDF();
   }, [
     invoiceNumber,
     selectedCurrency,
