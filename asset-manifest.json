@@ -1,21 +1,21 @@
 {
   "files": {
-    "main.css": "/invoice_generator/static/css/main.d91a47a3.css",
-    "main.js": "/invoice_generator/static/js/main.8ba050c3.js",
+    "main.css": "/invoice_generator/static/css/main.8084e821.css",
+    "main.js": "/invoice_generator/static/js/main.15447ae7.js",
     "static/js/239.266bd08c.chunk.js": "/invoice_generator/static/js/239.266bd08c.chunk.js",
     "static/js/977.69f3d1ca.chunk.js": "/invoice_generator/static/js/977.69f3d1ca.chunk.js",
     "static/js/732.627b6945.chunk.js": "/invoice_generator/static/js/732.627b6945.chunk.js",
     "static/js/453.a515215e.chunk.js": "/invoice_generator/static/js/453.a515215e.chunk.js",
     "index.html": "/invoice_generator/index.html",
-    "main.d91a47a3.css.map": "/invoice_generator/static/css/main.d91a47a3.css.map",
-    "main.8ba050c3.js.map": "/invoice_generator/static/js/main.8ba050c3.js.map",
+    "main.8084e821.css.map": "/invoice_generator/static/css/main.8084e821.css.map",
+    "main.15447ae7.js.map": "/invoice_generator/static/js/main.15447ae7.js.map",
     "239.266bd08c.chunk.js.map": "/invoice_generator/static/js/239.266bd08c.chunk.js.map",
     "977.69f3d1ca.chunk.js.map": "/invoice_generator/static/js/977.69f3d1ca.chunk.js.map",
     "732.627b6945.chunk.js.map": "/invoice_generator/static/js/732.627b6945.chunk.js.map",
     "453.a515215e.chunk.js.map": "/invoice_generator/static/js/453.a515215e.chunk.js.map"
   },
   "entrypoints": [
-    "static/css/main.d91a47a3.css",
-    "static/js/main.8ba050c3.js"
+    "static/css/main.8084e821.css",
+    "static/js/main.15447ae7.js"
   ]
 }
