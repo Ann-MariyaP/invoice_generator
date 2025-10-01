@@ -1,9 +1,12 @@
 import React from "react";
 import "./design.scss";
+import { AiOutlineClose } from "react-icons/ai";
 
 const ItemsTab = ({
   items,
   setItems,
+  currencies,
+  selectedCurrency,
   taxRate,
   setTaxRate,
   discount,
@@ -36,6 +39,8 @@ const ItemsTab = ({
   const taxAmount = subtotal * (taxRate / 100);
   const discountAmount = subtotal * (discount / 100);
   const total = subtotal + taxAmount - discountAmount;
+  const code = selectedCurrency?.code || "CAD";
+  const symbol = selectedCurrency?.symbol || "$";
 
   return (
     <div>
@@ -43,11 +48,11 @@ const ItemsTab = ({
       <table className="table table-bordered bg-light">
         <thead className="table-secondary">
           <tr>
-            <th>Description</th>
-            <th style={{ width: "100px" }}>Qty</th>
-            <th style={{ width: "120px" }}>Price</th>
-            <th style={{ width: "120px" }}>Total</th>
-            <th style={{ width: "50px" }}></th>
+            <th style={{ width: "40%" }}>Description</th>
+            <th style={{ width: "15%" }}>Qty</th>
+            <th style={{ width: "20%" }}>Price</th>
+            <th style={{ width: "25%" }}>Total</th>
+            <th></th>
           </tr>
         </thead>
         <tbody>
@@ -84,12 +89,16 @@ const ItemsTab = ({
               </td>
               <td>${(item.quantity * item.price).toFixed(2)}</td>
               <td>
-                <button
-                  className="btn btn-sm btn-danger"
-                  onClick={() => removeItem(idx)}
-                >
-                  &times;
-                </button>
+                {idx !== 0 && (
+                  <AiOutlineClose
+                    onClick={() => removeItem(idx)}
+                    style={{
+                      cursor: "pointer",
+                      color: "red",
+                      fontSize: "13px",
+                    }}
+                  />
+                )}
               </td>
             </tr>
           ))}
@@ -137,9 +146,11 @@ const ItemsTab = ({
         <p className="labels">
           Tax ({taxRate}%): ${taxAmount.toFixed(2)}
         </p>
+
         <p className="labels">
-          Discount ({discount}%): -${discountAmount.toFixed(2)}
+          Discount ({discount}%): -{symbol} {discountAmount.toFixed(2)}
         </p>
+
         <h5 className="labels">Total: ${total.toFixed(2)}</h5>
       </div>
 

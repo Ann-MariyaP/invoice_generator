@@ -1,23 +1,3 @@
-// const PreviewTab = ({
-//   invoiceNumber,
-//   currencies,
-//   invoiceDate,
-//   dueDate,
-//   name,
-//   email,
-//   phone,
-//   address,
-// }) => {
-//   const subtotal = items.reduce(
-//     (sum, item) => sum + item.quantity * item.price,
-//     0
-//   );
-//   const taxAmount = subtotal * (taxRate / 100);
-//   const discountAmount = subtotal * (discount / 100);
-//   const total = subtotal + taxAmount - discountAmount;
-
-//   const divRef = useRef(null);
-
 //   const handlePrintPDF = async () => {
 //     const element = divRef.current;
 //     if (!element) return;
@@ -221,15 +201,12 @@
 // export default PreviewTab;
 
 import "./design.scss";
-
-import React, { useEffect, useState,useRef } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
-import { FaSquarePhone } from "react-icons/fa6";
-import { TfiEmail } from "react-icons/tfi";
 import emailIcon from "../assets/gmail.png";
 import phoneIcon from "../assets/phone.png";
-import locationIcon from "../assets/location.png"
+import locationIcon from "../assets/location.png";
 
 const PreviewTab = ({
   invoiceNumber,
@@ -269,16 +246,14 @@ const PreviewTab = ({
     };
   }, [pdfUrl]);
 
-
-
   useEffect(() => {
     const generatePDF = async () => {
       const doc = new jsPDF();
       const pageHeight = doc.internal.pageSize.height;
-      const margin = 9; // get page height
+      const margin = 9;
 
-      const code = selectedCurrency.code || "";
-      const symbol = selectedCurrency.symbol || "";
+      const code = selectedCurrency.code || "CAD";
+      const symbol = selectedCurrency.symbol || "$";
       const headerColor = [88, 120, 140];
       const mainText = [67, 74, 79];
 
@@ -292,8 +267,11 @@ const PreviewTab = ({
         doc.setFontSize(9);
         doc.setTextColor(...mainText);
         doc.text(name || "Company Name", 11, margin + 7);
-        doc.setFontSize(9);
-        doc.text(invoiceNumber || "", 179, margin + 7);
+         doc.setFontSize(8);
+        doc.text(`Bill To: ${clientName}`|| "", 11, margin +12);
+        doc.text(invoiceNumber || "", 181, margin + 7);
+        doc.setFillColor(...headerColor);
+        doc.rect(11, margin + 14, 188, 0.1, "F");
       };
 
       // Footer function
@@ -311,8 +289,9 @@ const PreviewTab = ({
         });
       };
 
-      doc.setFillColor(240, 240, 240);
+      doc.setFillColor(244, 245, 246);
       doc.rect(11, margin + 3, 188, dueDate ? 61 : 50, "F");
+
       // BILL FROM
       doc.setFont("helvetica", "bold");
       doc.setFontSize(13);
@@ -346,7 +325,7 @@ const PreviewTab = ({
         align: "right",
       });
       doc.text(
-        `${code} ${total.toFixed(2)}`,
+        `${code} ${symbol} ${total.toFixed(2)}`,
         195,
         dueDate ? margin + 58 : margin + 46,
         {
@@ -360,15 +339,18 @@ const PreviewTab = ({
       doc.setFontSize(11);
       doc.text(clientName || "", 15, dueDate ? 87 : 78);
       doc.setFontSize(10);
+     if (clientAddress) {
        doc.addImage(locationIcon, "PNG", 15, dueDate ? 91 : 82, 4, 4);
+     }
       doc.text(clientAddress || "", 20, dueDate ? 94 : 85);
-      // --- 3. Add icon to PDF ---
+      if(clientEmail){
       doc.addImage(emailIcon, "PNG", 15, dueDate ? 97 : 88, 4, 4);
-      doc.text(clientEmail || "", 20, dueDate ? 100 : 91);
-      doc.addImage(phoneIcon, "PNG", 15, dueDate ? 103 : 95, 4, 4);
-      doc.text(clientPhone || "", 20, dueDate ? 106 : 98);
-
-    
+      }
+      doc.text(clientEmail || "", 20, dueDate ? 100 : 91);    
+      if (clientPhone){
+        doc.addImage(phoneIcon, "PNG", 15, dueDate ? 103 : 95, 4, 4);
+      }
+        doc.text(clientPhone || "", 20, dueDate ? 106 : 98);
 
       // ITEMS TABLE
       autoTable(doc, {
@@ -406,7 +388,7 @@ const PreviewTab = ({
         },
         didParseCell: function (data) {
           if (data.section === "body" && data.row.index % 2 === 1) {
-            data.cell.styles.fillColor = [204, 220, 229];
+            data.cell.styles.fillColor = [236, 245, 251];
           }
         },
         theme: "plain",
@@ -416,21 +398,25 @@ const PreviewTab = ({
         },
       });
 
-      let finalY1 = doc.lastAutoTable.finalY + 6;
+      let finalY1 = doc.lastAutoTable.finalY + 1;
+       doc.setFillColor(231, 233, 236);
+       doc.rect(11, finalY1, 188, 0.1, "F");
       doc.setTextColor(206, 224, 234);
       doc.setFont("helvetica", "normal");
-      doc.setFontSize(9);
-      doc.text("* Indicates non-taxable line item", 11, finalY1);
+      doc.setFontSize(8);
+      doc.text("* Indicates non-taxable line item", 11, finalY1+4);
 
       // SUMMARY
-      let finalY = doc.lastAutoTable.finalY + 8;
+      let finalY = doc.lastAutoTable.finalY + 10;
       const summaryHeight = 60;
 
       // If summary won't fit, add a new page
       if (finalY + summaryHeight > pageHeight - 30) {
         doc.addPage();
         addHeader();
-        finalY = 25; // reset to top margin of new page
+        if(addHeader){
+          finalY = 30; // reset to top margin of new page
+        };
       }
       doc.setTextColor(...mainText);
       doc.setFont("helvetica", "bold");
@@ -466,7 +452,7 @@ const PreviewTab = ({
         }
       );
       doc.setFontSize(11);
-      doc.setFillColor(206, 224, 234);
+      doc.setFillColor(236, 245, 251);
       doc.rect(91, discountAmount ? finalY + 24 : finalY + 17, 108, 9, "F");
       doc.setFont("helvetica", "bold");
       doc.text("BALANCE DUE :", 93, discountAmount ? finalY + 30 : finalY + 23);
@@ -553,13 +539,14 @@ const PreviewTab = ({
       {/* LIVE PDF PREVIEW */}
       {pdfUrl && (
         <iframe
-          src={pdfUrl}
+          src={`${pdfUrl}#view=fitH&zoom=page-width`}
           width="100%"
           height="100%"
+          
           style={{
             marginTop: "20px",
             border: "1px solid #ccc",
-            height: "60vh",
+            height: "65vh",
           }}
           title="PDF Preview"
         />

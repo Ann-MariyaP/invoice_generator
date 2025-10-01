@@ -11,17 +11,19 @@
   -webkit-text-fill-color: transparent;
   color: transparent; // Fallback for browsers that don't support -webkit-text-fill-color
   display: inline-block; //
+  margin-left: -14px;
 }
 .logo {
-  color: #040a65;
-  font-size: 31px;
-  margin-right: 6px;
-  padding-bottom: 4px;
+  color: #050c6c;
+  font-size: 50px;
+  margin-block: 3px;
+  padding-right: 3px;
 }
 .slogan {
   color: #8b9fc3;
-  font-size: smaller;
-  margin-bottom: 5px;
+  font-size:11px ;
+  margin-top: -8px;
+ margin-left: -14px;
 }
 .labels{
   color:#0d114e;
@@ -45,4 +47,5 @@
   border-bottom: 2px solid #e0e0f2 !important;
   border-radius: 0 !important;
   color: #5f6590 !important;
+  // background-color: blue( rgb(244, 245, 246));
 }

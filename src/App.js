@@ -59,12 +59,16 @@ function App() {
 
   return (
     <div className="container-fluid py-2">
-      <div className="p-4 rounded shadow">
-        <h2 className="maingHeading">
-          <LiaFileInvoiceDollarSolid className="logo" />
-          Invoice Generator
-        </h2>
-        <p className="slogan">Create professional invoices in minutes</p>
+      <div className="px-2 py-3 rounded shadow">
+        <div className="row">
+          <div className="col-auto"> 
+              <LiaFileInvoiceDollarSolid className="logo" />
+          </div>
+          <div className="col">
+            <h3 className="maingHeading">Invoice Generator</h3>
+            <p className="slogan">Create professional invoices in minutes</p>
+          </div>
+        </div>
 
         <ul className="nav mb-4">
           <li className="nav-item">
