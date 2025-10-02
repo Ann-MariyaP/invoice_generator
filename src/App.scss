@@ -15,13 +15,12 @@
 }
 .logo {
   color: #050c6c;
-  font-size: 50px;
-  margin-block: 3px;
+  font-size: 48px;
+  // margin-block: 2px;
   padding-right: 3px;
 }
 .slogan {
   color: #8b9fc3;
-  font-size:11px ;
   margin-top: -8px;
  margin-left: -14px;
 }
@@ -48,4 +47,17 @@
   border-radius: 0 !important;
   color: #5f6590 !important;
   // background-color: blue( rgb(244, 245, 246));
+}
+
+@media (max-width: 991px) {
+ .slogan{
+  font-size: 11px;
+ }
+}
+
+/* Small devices (landscape phones, ≥576px) */
+@media (min-width: 992px) and (max-width: 1450px) {
+ .slogan{
+  font-size: 13px;
+ }
 }

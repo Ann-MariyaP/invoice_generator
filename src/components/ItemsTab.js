@@ -50,9 +50,9 @@ const ItemsTab = ({
           <tr>
             <th style={{ width: "40%" }}>Description</th>
             <th style={{ width: "15%" }}>Qty</th>
-            <th style={{ width: "20%" }}>Price</th>
-            <th style={{ width: "25%" }}>Total</th>
-            <th></th>
+            <th style={{ width: "22%" }}>Price</th>
+            <th style={{ width: "23%" }}>Total</th>
+            {/* <th></th> */}
           </tr>
         </thead>
         <tbody>
@@ -87,18 +87,22 @@ const ItemsTab = ({
                   onChange={(e) => handleChange(idx, "price", e.target.value)}
                 />
               </td>
-              <td>${(item.quantity * item.price).toFixed(2)}</td>
               <td>
-                {idx !== 0 && (
-                  <AiOutlineClose
-                    onClick={() => removeItem(idx)}
-                    style={{
-                      cursor: "pointer",
-                      color: "red",
-                      fontSize: "13px",
-                    }}
-                  />
-                )}
+                <div className="d-flex justify-content-between align-items-center pt-2">
+                  ${(item.quantity * item.price).toFixed(2)}{" "}
+                  {idx !== 0 && (
+                    <AiOutlineClose
+                      onClick={() => removeItem(idx)}
+                      style={{
+                        cursor: "pointer",
+                        color: "red",
+                        fontSize: "13px",
+                        marginTop: "2px",
+                        marginLeft: "3px",
+                      }}
+                    />
+                  )}
+                </div>
               </td>
             </tr>
           ))}
