@@ -33,7 +33,6 @@ const InvoiceDetailsTab = ({
   return (
     <div>
       <h5 className="mb-3 labels">Invoice Details</h5>
-
       <div className="row mb-3">
         <div className="col-md-6">
           <label className="labels">Invoice Number</label>
@@ -81,6 +80,7 @@ const InvoiceDetailsTab = ({
             type="date"
             className="form-control"
             value={dueDate}
+            min={invoiceDate}
             onChange={(e) => setDueDate(e.target.value)}
           />
         </div>

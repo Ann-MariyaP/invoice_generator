@@ -1,205 +1,3 @@
-//   const handlePrintPDF = async () => {
-//     const element = divRef.current;
-//     if (!element) return;
-
-//     const canvas = await html2canvas(element);
-//     const imgData = canvas.toDataURL("image/png");
-
-//     const pdf = new jsPDF({
-//       orientation: "portrait",
-//       unit: "px",
-//       format: "letter",
-//     });
-
-//     const pageWidth = pdf.internal.pageSize.getWidth();
-//     const imgProps = pdf.getImageProperties(imgData);
-//     const pdfHeight = (imgProps.height * pageWidth) / imgProps.width;
-//     pdf.addImage(imgData, "PNG", 0, 0, pageWidth, pdfHeight);
-//     pdf.save("Invoice.pdf");
-//   };
-
-//   return (
-//     <div className="preview-tab">
-//       <div className="row">
-//         <div className="col-2">
-//           <button onClick={handlePrintPDF} className="btn dwnld_btn">
-//             Download PDF
-//           </button>
-//         </div>
-//       </div>
-//       <div ref={divRef} className="container invoice_preview border">
-//         <div
-//           className="row"
-//           style={{ backgroundColor: "rgba(88, 120, 140, 1)", height: "18px" }}
-//         ></div>
-//         <div className="row mb-5 from_row align-items-center">
-//           <div className="col text-start ">
-//             <p
-//               className="mb-2"
-//               style={{ fontSize: "30px", fontWeight: "600", color: "rgba(67, 74, 79, 1)" }}
-//             >
-//               {name}
-//             </p>
-//             {address && (
-//               <p className="mb-1 preview_font" style={{ maxWidth: "7cm" }}>
-//                 {address}
-//               </p>
-//             )}
-//             {email && <p className="mb-1 preview_font">{email}</p>}
-//             {phone && <p className="preview_font">{phone}</p>}
-//           </div>
-//           <div className="col text-end p-2">
-//             <h4 className="invoice_head mb-1 mt-2">INVOICE</h4>
-//             <p className="preview_font mb-4">{invoiceNumber}</p>
-//             <p className="invoice_head mb-1">DATE</p>
-//             <p className="preview_font mb-4">{invoiceDate}</p>
-//             {dueDate && <p>Due Date: {dueDate}</p>}
-//             <p className="invoice_head mb-1"> BALANCE DUE</p>
-//             <p className="preview_font">
-//               {currencies} {total.toFixed(2)}
-//             </p>
-//           </div>
-//         </div>
-
-//         <div className="row mb-4">
-//           <div className="col text-start">
-//             <p className="preview_font">BILL TO :</p>
-//             <p
-//               className="mb-2 mt-3"
-//               style={{ fontSize: "26px", fontWeight: "600" }}
-//             >
-//               {clientName}
-//             </p>
-//             {clientAddress && (
-//               <p className="mb-1 preview_font" style={{ maxWidth: "5cm" }}>
-//                 {clientAddress}
-//               </p>
-//             )}
-//             {clientEmail && (
-//               <p className="mb-1 preview_font">
-//                 <TfiEmail className="phone-icon" />
-//                 {clientEmail}
-//               </p>
-//             )}
-//             {clientPhone && (
-//               <p className="preview_font">
-//                 <FaSquarePhone className="phone-icon" />
-//                 {clientPhone}
-//               </p>
-//             )}
-//           </div>
-//         </div>
-
-//         <div className="mb-4">
-//           {/* <h6>Invoice Items</h6> */}
-//           <div className="row" style={{ overflowX: "auto" }}>
-//             <table className="mt-4">
-//               <thead style={{ backgroundColor: "rgba(66, 88, 113, 1)" }}>
-//                 <tr>
-//                   <th
-//                     style={{
-//                       padding: "8px",
-//                       color: "white",
-//                       width: "60%",
-//                       fontWeight: "500",
-//                     }}
-//                   >
-//                     DESCRIPTION
-//                   </th>
-//                   <th
-//                     style={{
-//                       color: "white",
-//                       textAlign: "end",
-//                       fontWeight: "500",
-//                     }}
-//                   >
-//                     RATE
-//                   </th>
-//                   <th
-//                     style={{
-//                       color: "white",
-//                       textAlign: "center",
-//                       fontWeight: "500",
-//                       width:"15%"
-//                     }}
-//                   >
-//                     QTY
-//                   </th>
-//                   <th
-//                     style={{
-//                       padding: "6px",
-//                       color: "white",
-//                       textAlign: "end",
-//                       fontWeight: "500",
-//                     }}
-//                   >
-//                     AMOUNT
-//                   </th>
-//                 </tr>
-//               </thead>
-//               <tbody>
-//                 {items.map((item, index) => (
-//                   <tr
-//                     key={index}
-//                     className={index % 2 === 1 ? "custom-row-even" : " "}
-//                   >
-//                     <td className="rows">{item.description}</td>
-//                     <td className="text-end rows">${item.price.toFixed(2)}</td>
-//                     <td className="text-center rows">{item.quantity}</td>
-//                     <td className="text-end rows">
-//                       ${(item.quantity * item.price).toFixed(2)}
-//                       {!item.taxable && "*"}
-//                     </td>
-//                   </tr>
-//                 ))}
-//               </tbody>
-//             </table>
-//           </div>
-//           <div className="row">
-//             <div className="col-6 note mt-2">
-//               * Indicates non-taxable line item
-//             </div>
-//             <div className="col mt-4" style={{ color: "#434a4f" }}>
-//               <div className="row" style={{ fontWeight: "500" }}>
-//                 <div className="col">SUBTOTAL :</div>
-//                 <div className=" col text-end">$ {subtotal.toFixed(2)}</div>
-//               </div>
-
-//               <div className="row" style={{ fontWeight: "500" }}>
-//                 <div className="col"> TAX ({taxRate}%) :</div>
-//                 <div className=" col text-end">$ {taxAmount.toFixed(2)}</div>
-//               </div>
-
-//               <div className="row" style={{ fontWeight: "500" }}>
-//                 <div className="col">TOTAL :</div>
-//                 <div className=" col text-end">$ {total.toFixed(2)}</div>
-//               </div>
-//               <div
-//                 className="row mt-2 py-2"
-//                 style={{ backgroundColor: "#cee0ea", fontWeight: "bold" }}
-//               >
-//                 <div className="col">BALANCE DUE :</div>
-//                 <div className=" col text-end">
-//                   {currencies} {total.toFixed(2)}
-//                 </div>
-//               </div>
-//             </div>
-//           </div>
-//         </div>
-
-//         {notes && (
-//           <div className="mb-4" style={{ color: "#434a4f" }}>
-//             <h6>Additional Notes</h6>
-//             <p>{notes}</p>
-//           </div>
-//         )}
-//       </div>
-//     </div>
-//   );
-// };
-
-// export default PreviewTab;
-
 import "./design.scss";
 import React, { useEffect, useState, useRef } from "react";
 import jsPDF from "jspdf";
@@ -248,9 +46,13 @@ const PreviewTab = ({
 
   useEffect(() => {
     const generatePDF = async () => {
-      const doc = new jsPDF();
+      const doc = new jsPDF({
+        format: "letter",
+      });
       const pageHeight = doc.internal.pageSize.height;
-      const margin = 9;
+      const margin = 10;
+      const marginLeft = 12;
+      const marginRight = 192;
 
       const code = selectedCurrency.code || "CAD";
       const symbol = selectedCurrency.symbol || "$";
@@ -258,39 +60,40 @@ const PreviewTab = ({
       const mainText = [67, 74, 79];
 
       doc.setFillColor(...headerColor);
-      doc.rect(11, margin, 188, 3, "F");
+      doc.rect(marginLeft, margin, marginRight, 3, "F");
       // HEADER
       const addHeader = () => {
         doc.setFillColor(...headerColor);
-        doc.rect(11, margin, 188, 3, "F");
+        doc.rect(marginLeft, margin, marginRight, 3, "F");
         doc.setFont("helvetica", "normal");
         doc.setFontSize(9);
         doc.setTextColor(...mainText);
-        doc.text(name || "Company Name", 11, margin + 7);
-         doc.setFontSize(8);
-        doc.text(`Bill To: ${clientName}`|| "", 11, margin +12);
-        doc.text(invoiceNumber || "", 181, margin + 7);
+        doc.text(name || "Company Name", marginLeft, margin + 7);
+        doc.setFontSize(8);
+        doc.text(`Bill To: ${clientName}` || "", marginLeft, margin + 12);
+        doc.text(invoiceNumber || "", 185, margin + 7);
+        doc.text(invoiceDate || "", 188, margin + 12);
         doc.setFillColor(...headerColor);
-        doc.rect(11, margin + 14, 188, 0.1, "F");
+        doc.rect(marginLeft, margin + 14, marginRight, 0.1, "F");
       };
 
       // Footer function
       const addFooter = (i, totalPages) => {
         doc.setFillColor(...headerColor);
-        doc.rect(11, pageHeight - 15, 188, 0.2, "F");
+        doc.rect(marginLeft, pageHeight - 15, marginRight, 0.2, "F");
         doc.setFont("helvetica", "normal");
         doc.setFontSize(9);
         doc.text(`Page ${i} of ${totalPages}`, 105, pageHeight - 10, {
           align: "center",
         });
         doc.setFontSize(7);
-        doc.text("Thank you for your business!", 199, pageHeight - 12, {
+        doc.text("Thank you for your business!", 202, pageHeight - 12, {
           align: "right",
         });
       };
 
       doc.setFillColor(244, 245, 246);
-      doc.rect(11, margin + 3, 188, dueDate ? 61 : 50, "F");
+      doc.rect(marginLeft, margin + 3, marginRight, dueDate ? 61 : 50, "F"); //#####################################
 
       // BILL FROM
       doc.setFont("helvetica", "bold");
@@ -305,28 +108,28 @@ const PreviewTab = ({
 
       // INVOICE INFO
       doc.setFontSize(14);
-      doc.text("INVOICE", 195, margin + 10, {
+      doc.text("INVOICE", 199, margin + 10, {
         align: "right",
       });
       doc.setFont("helvetica", "bold");
       doc.setFontSize(10);
-      doc.text(invoiceNumber || "", 195, margin + 16, {
+      doc.text(invoiceNumber || "", 199, margin + 16, {
         align: "right",
       });
-      doc.text("DATE", 195, margin + 25, {
+      doc.text("DATE", 199, margin + 25, {
         align: "right",
       });
-      doc.text(invoiceDate || "", 195, margin + 31, {
+      doc.text(invoiceDate || "", 199, margin + 31, {
         align: "right",
       });
-      doc.text(dueDate ? "DUE" : "", 195, margin + 39, { align: "right" });
-      doc.text(dueDate || "", 195, margin + 44, { align: "right" });
-      doc.text("BALANCE DUE", 195, dueDate ? margin + 53 : margin + 41, {
+      doc.text(dueDate ? "DUE" : "", 199, margin + 39, { align: "right" });
+      doc.text(dueDate || "", 199, margin + 44, { align: "right" });
+      doc.text("BALANCE DUE", 199, dueDate ? margin + 53 : margin + 41, {
         align: "right",
       });
       doc.text(
         `${code} ${symbol} ${total.toFixed(2)}`,
-        195,
+        199,
         dueDate ? margin + 58 : margin + 46,
         {
           align: "right",
@@ -335,22 +138,45 @@ const PreviewTab = ({
 
       // BILL TO
       doc.setFontSize(9);
-      doc.text("BILL TO :", 15, dueDate ? 79 : 70);
-      doc.setFontSize(11);
-      doc.text(clientName || "", 15, dueDate ? 87 : 78);
+       doc.setTextColor(150, 162, 172);
+      doc.text("BILL TO :", 15, dueDate ? margin+69 : margin+60);
+      doc.setFontSize(marginLeft);
+      doc.setTextColor(67, 74, 79);
+      doc.text(clientName || "", 15, dueDate ? margin+77 : margin+68);
       doc.setFontSize(10);
-     if (clientAddress) {
-       doc.addImage(locationIcon, "PNG", 15, dueDate ? 91 : 82, 4, 4);
-     }
-      doc.text(clientAddress || "", 20, dueDate ? 94 : 85);
-      if(clientEmail){
-      doc.addImage(emailIcon, "PNG", 15, dueDate ? 97 : 88, 4, 4);
+      if (clientAddress) {
+        doc.addImage(
+          locationIcon,
+          "PNG",
+          15,
+          dueDate ? margin + 81 : margin + 72,
+          4,
+          4
+        );
       }
-      doc.text(clientEmail || "", 20, dueDate ? 100 : 91);    
-      if (clientPhone){
-        doc.addImage(phoneIcon, "PNG", 15, dueDate ? 103 : 95, 4, 4);
+      doc.text(clientAddress || "", 20, dueDate ? margin + 84 : margin + 75);
+      if (clientEmail) {
+        doc.addImage(
+          emailIcon,
+          "PNG",
+          15,
+          dueDate ? margin + 87 : margin + 78,
+          4,
+          4
+        );
       }
-        doc.text(clientPhone || "", 20, dueDate ? 106 : 98);
+      doc.text(clientEmail || "", 20, dueDate ? margin + 90 : margin + 81);
+      if (clientPhone) {
+        doc.addImage(
+          phoneIcon,
+          "PNG",
+          15,
+          dueDate ? margin + 93 : margin + 85,
+          4,
+          4
+        );
+      }
+      doc.text(clientPhone || "", 20, dueDate ? margin + 96 : margin + 88);
 
       // ITEMS TABLE
       autoTable(doc, {
@@ -373,7 +199,7 @@ const PreviewTab = ({
           fillColor: headerColor,
           textColor: [247, 247, 247],
         },
-        margin: { left: 11, right: 11, top: 20 },
+        margin: { left: marginLeft, right: 11, top: 20 },
         tableWidth: "auto",
         styles: {
           fontSize: 10,
@@ -381,7 +207,7 @@ const PreviewTab = ({
           textColor: [0, 0, 0],
         },
         columnStyles: {
-          0: { cellWidth: 96, halign: "left" },
+          0: { cellWidth: 100, halign: "left" },
           1: { cellWidth: 36, halign: "right" },
           2: { cellWidth: 20, halign: "center" },
           3: { cellWidth: 36, halign: "right" },
@@ -399,12 +225,12 @@ const PreviewTab = ({
       });
 
       let finalY1 = doc.lastAutoTable.finalY + 1;
-       doc.setFillColor(231, 233, 236);
-       doc.rect(11, finalY1, 188, 0.1, "F");
+      doc.setFillColor(231, 233, 236);
+      doc.rect(marginLeft, finalY1, marginRight, 0.1, "F");
       doc.setTextColor(206, 224, 234);
       doc.setFont("helvetica", "normal");
       doc.setFontSize(8);
-      doc.text("* Indicates non-taxable line item", 11, finalY1+4);
+      doc.text("* Indicates non-taxable line item", 11, finalY1 + 4);
 
       // SUMMARY
       let finalY = doc.lastAutoTable.finalY + 10;
@@ -414,19 +240,19 @@ const PreviewTab = ({
       if (finalY + summaryHeight > pageHeight - 30) {
         doc.addPage();
         addHeader();
-        if(addHeader){
+        if (addHeader) {
           finalY = 30; // reset to top margin of new page
-        };
+        }
       }
       doc.setTextColor(...mainText);
       doc.setFont("helvetica", "bold");
       doc.setFontSize(10);
       doc.text("SUBTOTAL :", 93, finalY);
-      doc.text(`${symbol} ${subtotal.toFixed(2)}`, 197, finalY, {
+      doc.text(`${symbol} ${subtotal.toFixed(2)}`, 201, finalY, {
         align: "right",
       });
       doc.text(`TAX (${taxRate}%) :`, 93, finalY + 7);
-      doc.text(`${symbol} ${taxAmount.toFixed(2)}`, 197, finalY + 7, {
+      doc.text(`${symbol} ${taxAmount.toFixed(2)}`, 201, finalY + 7, {
         align: "right",
       });
       doc.text(
@@ -436,7 +262,7 @@ const PreviewTab = ({
       );
       doc.text(
         discountAmount ? `- ${symbol} ${discountAmount.toFixed(2)}` : "",
-        197,
+        201,
         finalY + 14,
         {
           align: "right",
@@ -445,7 +271,7 @@ const PreviewTab = ({
       doc.text("TOTAL :", 93, discountAmount ? finalY + 21 : finalY + 14);
       doc.text(
         `${symbol} ${total.toFixed(2)}`,
-        197,
+        201,
         discountAmount ? finalY + 21 : finalY + 14,
         {
           align: "right",
@@ -453,12 +279,12 @@ const PreviewTab = ({
       );
       doc.setFontSize(11);
       doc.setFillColor(236, 245, 251);
-      doc.rect(91, discountAmount ? finalY + 24 : finalY + 17, 108, 9, "F");
+      doc.rect(91, discountAmount ? finalY + 24 : finalY + 17, 112, 9, "F");
       doc.setFont("helvetica", "bold");
       doc.text("BALANCE DUE :", 93, discountAmount ? finalY + 30 : finalY + 23);
       doc.text(
         `${symbol} ${total.toFixed(2)}`,
-        197,
+        201,
         discountAmount ? finalY + 30 : finalY + 23,
         {
           align: "right",
@@ -477,7 +303,10 @@ const PreviewTab = ({
       doc.setFont("helvetica", "bold");
       doc.text("Additional Notes:", 15, notesY + 2);
       doc.setFont("helvetica", "normal");
-      doc.text(notes || "", 15, notesY + 8);
+      doc.text(notes || "", 15, notesY + 8, {
+        maxWidth: 190,
+        align: "left",
+      });
 
       // ------------------------
       // FOOTERS AFTER ALL CONTENT
@@ -521,7 +350,7 @@ const PreviewTab = ({
     if (pdfUrl) {
       const link = document.createElement("a");
       link.href = pdfUrl;
-      link.download = `${invoiceNumber}.pdf`;
+      link.download = `${invoiceNumber}-${name}.pdf`;
       link.click();
     }
   };
@@ -542,7 +371,6 @@ const PreviewTab = ({
           src={`${pdfUrl}#view=fitH&zoom=page-width`}
           width="100%"
           height="100%"
-          
           style={{
             marginTop: "20px",
             border: "1px solid #ccc",
