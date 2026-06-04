@@ -5,28 +5,31 @@ import {
   LiaFileInvoiceSolid,
   LiaFileInvoiceDollarSolid,
 } from "react-icons/lia";
-
+import { saveInvoice,getNextInvoiceNumber, updateInvoice, getAllInvoices } from "./services/api";
 import InvoiceDetailsTab from "./components/InvoiceDetailsTab";
 import ItemsTab from "./components/ItemsTab";
 import PreviewTab from "./components/PreviewTab";
 
 function App() {
   const [activeTab, setActiveTab] = useState("details");
-
-  const [invoiceNumber, setInvoiceNumber] = useState("INV-2025-001");
+  const [invoiceNumber, setInvoiceNumber] = useState("");
   const [invoiceDate, setInvoiceDate] = useState(
     new Date().toISOString().split("T")[0]
   );
   const [dueDate, setDueDate] = useState("");
-  const [name, setName] = useState("");
-  const [email, setEmail] = useState("");
-  const [phone, setPhone] = useState("");
-  const [address, setAddress] = useState("");
+ const [seller, setSeller] = useState({
+   name: "",
+   email: "",
+   phone: "",
+   address: "",
+ });
 
-  const [clientName, setclientName] = useState("");
-  const [clientEmail, setclientEmail] = useState("");
-  const [clientPhone, setclientPhone] = useState("");
-  const [clientAddress, setclientAddress] = useState("");
+  const [client, setClient] = useState({
+    name: "",
+    email: "",
+    phone: "",
+    address: "",
+  });
 
   const [items, setItems] = useState([
     { description: "", quantity: 1, price: 0 },
@@ -37,6 +40,51 @@ function App() {
 
   const [currencies, setCurrencies] = useState([]);
   const [selectedCurrency, setSelectedCurrency] = useState("");
+
+  const handleSaveInvoice = async () => {
+    console.log("SAVE CLICKED");
+    const invoiceData = {
+      invoiceNumber,
+      invoiceDate,
+      dueDate,
+
+      seller: {
+        name: seller.name,
+        email: seller.email,
+        phone: seller.phone,
+        address: seller.address,
+      },
+
+      client: {
+        name: client.name,
+        email: client.email,
+        phone: client.phone,
+        address: client.address,
+      },
+
+      items,
+      notes,
+      taxRate,
+      discount,
+      selectedCurrency,
+    };
+
+    try {
+      console.log("Sending invoice:", invoiceData);
+      const response = await saveInvoice(invoiceData);
+console.log("Response:", response);
+      // invoice number from backend
+     const newInvoiceNumber = response.data.invoiceNumber;
+
+     setInvoiceNumber(newInvoiceNumber);
+
+      console.log("Invoice saved:", response.data);
+
+      alert("Invoice saved successfully!");
+    } catch (error) {
+      console.error("Error saving invoice:", error);
+    }
+  };
 
   useEffect(() => {
     fetch(process.env.PUBLIC_URL + "/currencies.json")
@@ -57,12 +105,26 @@ function App() {
       });
   }, []);
 
+  useEffect(() => {
+    fetchInvoiceNumber();
+  }, []);
+
+  const fetchInvoiceNumber = async () => {
+    try {
+      const response = await getNextInvoiceNumber();
+
+      setInvoiceNumber(response.data.invoiceNumber);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
   return (
     <div className="container-fluid py-2">
       <div className="px-2 py-3 rounded shadow">
         <div className="row">
-          <div className="col-auto"> 
-              <LiaFileInvoiceDollarSolid className="logo" />
+          <div className="col-auto">
+            <LiaFileInvoiceDollarSolid className="logo" />
           </div>
           <div className="col">
             <h3 className="maingHeading">Invoice Generator</h3>
@@ -115,22 +177,10 @@ function App() {
             setInvoiceDate={setInvoiceDate}
             dueDate={dueDate}
             setDueDate={setDueDate}
-            name={name}
-            setName={setName}
-            email={email}
-            setEmail={setEmail}
-            phone={phone}
-            setPhone={setPhone}
-            address={address}
-            setAddress={setAddress}
-            clientName={clientName}
-            setclientName={setclientName}
-            clientEmail={clientEmail}
-            setclientEmail={setclientEmail}
-            clientPhone={clientPhone}
-            setclientPhone={setclientPhone}
-            clientAddress={clientAddress}
-            setclientAddress={setclientAddress}
+            seller={seller}
+            setSeller={setSeller}
+            client={client}
+            setClient={setClient}
             setActiveTab={setActiveTab}
           />
         )}
@@ -156,18 +206,13 @@ function App() {
             selectedCurrency={selectedCurrency}
             invoiceDate={invoiceDate}
             dueDate={dueDate}
-            name={name}
-            email={email}
-            phone={phone}
-            address={address}
-            clientName={clientName}
-            clientEmail={clientEmail}
-            clientPhone={clientPhone}
-            clientAddress={clientAddress}
+            seller={seller}
+            client={client}
             items={items}
             notes={notes}
             taxRate={taxRate}
             discount={discount}
+            handleSaveInvoice={handleSaveInvoice}
           />
         )}
       </div>

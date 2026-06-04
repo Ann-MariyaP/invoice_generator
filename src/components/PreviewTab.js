@@ -12,25 +12,20 @@ const PreviewTab = ({
   selectedCurrency,
   invoiceDate,
   dueDate,
-  name,
-  email,
-  phone,
-  address,
-  clientName,
-  clientEmail,
-  clientPhone,
-  clientAddress,
+  seller,
+  client,
   items,
   notes,
   taxRate,
   discount,
+  handleSaveInvoice,
 }) => {
   const [pdfUrl, setPdfUrl] = useState(null);
 
   // --- CALCULATIONS ---
   const subtotal = items.reduce(
     (sum, item) => sum + item.quantity * item.price,
-    0
+    0,
   );
   const taxAmount = subtotal * (taxRate / 100);
   const discountAmount = subtotal * (discount / 100);
@@ -68,9 +63,9 @@ const PreviewTab = ({
         doc.setFont("helvetica", "normal");
         doc.setFontSize(9);
         doc.setTextColor(...mainText);
-        doc.text(name || "Company Name", marginLeft, margin + 7);
+        doc.text(seller?.name || "Company Name", marginLeft, margin + 7);
         doc.setFontSize(8);
-        doc.text(`Bill To: ${clientName}` || "", marginLeft, margin + 12);
+        doc.text(`Bill To: ${client?.name}` || "", marginLeft, margin + 12);
         doc.text(invoiceNumber || "", 185, margin + 7);
         doc.text(invoiceDate || "", 188, margin + 12);
         doc.setFillColor(...headerColor);
@@ -93,18 +88,19 @@ const PreviewTab = ({
       };
 
       doc.setFillColor(244, 245, 246);
-      doc.rect(marginLeft, margin + 3, marginRight, dueDate ? 61 : 50, "F"); //#####################################
+      doc.rect(marginLeft, margin + 3, marginRight, dueDate ? 61 : 50, "F");
+      //#####################################
 
       // BILL FROM
       doc.setFont("helvetica", "bold");
       doc.setFontSize(13);
       doc.setTextColor(67, 74, 79);
-      doc.text(name || "Company Name", 15, margin + 17);
+      doc.text(seller?.name || "Company Name", 15, margin + 17);
       doc.setFont("helvetica", "bold");
       doc.setFontSize(10);
-      doc.text(address || "", 15, margin + 25);
-      doc.text(email || "", 15, margin + 31);
-      doc.text(phone || "", 15, margin + 38);
+      doc.text(seller?.address || "", 15, margin + 25);
+      doc.text(seller?.email || "", 15, margin + 31);
+      doc.text(seller?.phone || "", 15, margin + 38);
 
       // INVOICE INFO
       doc.setFontSize(14);
@@ -133,50 +129,50 @@ const PreviewTab = ({
         dueDate ? margin + 58 : margin + 46,
         {
           align: "right",
-        }
+        },
       );
 
       // BILL TO
       doc.setFontSize(9);
-       doc.setTextColor(150, 162, 172);
-      doc.text("BILL TO :", 15, dueDate ? margin+69 : margin+60);
+      doc.setTextColor(150, 162, 172);
+      doc.text("BILL TO :", 15, dueDate ? margin + 69 : margin + 60);
       doc.setFontSize(marginLeft);
       doc.setTextColor(67, 74, 79);
-      doc.text(clientName || "", 15, dueDate ? margin+77 : margin+68);
+      doc.text(client?.name || "", 15, dueDate ? margin + 77 : margin + 68);
       doc.setFontSize(10);
-      if (clientAddress) {
+      if (client?.address) {
         doc.addImage(
           locationIcon,
           "PNG",
           15,
           dueDate ? margin + 81 : margin + 72,
           4,
-          4
+          4,
         );
       }
-      doc.text(clientAddress || "", 20, dueDate ? margin + 84 : margin + 75);
-      if (clientEmail) {
+      doc.text(client?.address || "", 20, dueDate ? margin + 84 : margin + 75);
+      if (client?.email) {
         doc.addImage(
           emailIcon,
           "PNG",
           15,
           dueDate ? margin + 87 : margin + 78,
           4,
-          4
+          4,
         );
       }
-      doc.text(clientEmail || "", 20, dueDate ? margin + 90 : margin + 81);
-      if (clientPhone) {
+      doc.text(client?.email || "", 20, dueDate ? margin + 90 : margin + 81);
+      if (client?.phone) {
         doc.addImage(
           phoneIcon,
           "PNG",
           15,
           dueDate ? margin + 93 : margin + 85,
           4,
-          4
+          4,
         );
       }
-      doc.text(clientPhone || "", 20, dueDate ? margin + 96 : margin + 88);
+      doc.text(client?.phone || "", 20, dueDate ? margin + 96 : margin + 88);
 
       // ITEMS TABLE
       autoTable(doc, {
@@ -258,7 +254,7 @@ const PreviewTab = ({
       doc.text(
         discountAmount ? `DISCOUNT (${discount}%) :` : "",
         93,
-        finalY + 14
+        finalY + 14,
       );
       doc.text(
         discountAmount ? `- ${symbol} ${discountAmount.toFixed(2)}` : "",
@@ -266,7 +262,7 @@ const PreviewTab = ({
         finalY + 14,
         {
           align: "right",
-        }
+        },
       );
       doc.text("TOTAL :", 93, discountAmount ? finalY + 21 : finalY + 14);
       doc.text(
@@ -275,7 +271,7 @@ const PreviewTab = ({
         discountAmount ? finalY + 21 : finalY + 14,
         {
           align: "right",
-        }
+        },
       );
       doc.setFontSize(11);
       doc.setFillColor(236, 245, 251);
@@ -288,7 +284,7 @@ const PreviewTab = ({
         discountAmount ? finalY + 30 : finalY + 23,
         {
           align: "right",
-        }
+        },
       );
 
       // NOTES
@@ -327,14 +323,8 @@ const PreviewTab = ({
     selectedCurrency,
     invoiceDate,
     dueDate,
-    name,
-    email,
-    phone,
-    address,
-    clientName,
-    clientEmail,
-    clientPhone,
-    clientAddress,
+    seller,
+    client,
     items,
     notes,
     taxRate,
@@ -350,20 +340,31 @@ const PreviewTab = ({
     if (pdfUrl) {
       const link = document.createElement("a");
       link.href = pdfUrl;
-      link.download = `${invoiceNumber}-${name}.pdf`;
+      link.download = `${invoiceNumber}-${seller?.name}.pdf`;
       link.click();
     }
   };
 
   return (
     <div>
-      <button
+      <div className="button-group">
+        <button className="btn btn--save" onClick={handleSaveInvoice}>
+          Save Invoice
+        </button>
+        <button
+          className="btn btn--download" onClick={downloadPDF}
+        disabled={!pdfUrl}
+        >
+          Download PDF
+        </button>
+      </div>
+      {/* <button
         onClick={downloadPDF}
         disabled={!pdfUrl}
         className="btn dwnld_btn"
       >
         Download PDF
-      </button>
+      </button> */}
 
       {/* LIVE PDF PREVIEW */}
       {pdfUrl && (

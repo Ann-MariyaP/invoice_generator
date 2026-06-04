@@ -3,9 +3,44 @@
   box-shadow: none !important;
   border: 1px solid #cacbcb !important;
 }
-.dwnld_btn {
-  background-color: rgb(4, 170, 10);
-  color: white;
+// Button container
+.button-group {
+  display: flex;
+  gap: 12px;
+}
+
+.btn {
+  padding: 10px 16px;
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  border: none;
+  transition: all 0.2s ease;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.12);
+  &:hover {
+    transform: translateY(-1px);
+  }
+  &:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
+ 
+  &--save {
+    background-color: #2563eb;
+    color: white;
+    &:hover {
+      background-color: #1d4ed8;
+    }
+  }
+
+  &--download {
+    background-color: #16a34a;
+    color: white;
+    &:hover {
+      background-color: #15803d;
+    }
+  }
 }
 .from_row {
   background-color: rgb(241, 246, 251);

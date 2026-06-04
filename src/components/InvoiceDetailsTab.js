@@ -12,22 +12,10 @@ const InvoiceDetailsTab = ({
   setInvoiceDate,
   dueDate,
   setDueDate,
-  name,
-  setName,
-  email,
-  setEmail,
-  phone,
-  setPhone,
-  address,
-  setAddress,
-  clientName,
-  setclientName,
-  clientEmail,
-  setclientEmail,
-  clientPhone,
-  setclientPhone,
-  clientAddress,
-  setclientAddress,
+  seller,
+  setSeller,
+  client,
+  setClient,
   setActiveTab,
 }) => {
   return (
@@ -40,7 +28,7 @@ const InvoiceDetailsTab = ({
             type="text"
             className="form-control"
             value={invoiceNumber}
-            onChange={(e) => setInvoiceNumber(e.target.value)}
+            readOnly
           />
         </div>
         <div className="col-md-6">
@@ -95,8 +83,8 @@ const InvoiceDetailsTab = ({
           <input
             type="text"
             className="form-control"
-            value={name}
-            onChange={(e) => setName(e.target.value)}
+            value={seller.name}
+            onChange={(e) => setSeller({ ...seller, name: e.target.value })}
           />
         </div>
         <div className="col-md-6">
@@ -104,8 +92,8 @@ const InvoiceDetailsTab = ({
           <input
             type="email"
             className="form-control"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
+            value={seller.email}
+            onChange={(e) => setSeller({ ...seller, email: e.target.value })}
           />
         </div>
       </div>
@@ -115,8 +103,8 @@ const InvoiceDetailsTab = ({
           <input
             type="tel"
             className="form-control"
-            value={phone}
-            onChange={(e) => setPhone(e.target.value)}
+            value={seller.phone}
+            onChange={(e) => setSeller({ ...seller, phone: e.target.value })}
           />
         </div>
         <div className="col-md-6">
@@ -124,8 +112,8 @@ const InvoiceDetailsTab = ({
           <textarea
             className="form-control"
             rows="3"
-            value={address}
-            onChange={(e) => setAddress(e.target.value)}
+            value={seller.address}
+            onChange={(e) => setSeller({ ...seller, address: e.target.value })}
           ></textarea>
         </div>
       </div>
@@ -139,8 +127,8 @@ const InvoiceDetailsTab = ({
           <input
             type="text"
             className="form-control"
-            value={clientName}
-            onChange={(e) => setclientName(e.target.value)}
+            value={client.name}
+            onChange={(e) => setClient({ ...client, name: e.target.value })}
           />
         </div>
         <div className="col-md-6">
@@ -148,8 +136,8 @@ const InvoiceDetailsTab = ({
           <input
             type="email"
             className="form-control"
-            value={clientEmail}
-            onChange={(e) => setclientEmail(e.target.value)}
+            value={client.email}
+            onChange={(e) => setClient({ ...client, email: e.target.value })}
           />
         </div>
       </div>
@@ -159,8 +147,8 @@ const InvoiceDetailsTab = ({
           <input
             type="tel"
             className="form-control"
-            value={clientPhone}
-            onChange={(e) => setclientPhone(e.target.value)}
+            value={client.phone}
+            onChange={(e) => setClient({ ...client, phone: e.target.value })}
           />
         </div>
         <div className="col-md-6">
@@ -168,8 +156,8 @@ const InvoiceDetailsTab = ({
           <textarea
             className="form-control"
             rows="3"
-            value={clientAddress}
-            onChange={(e) => setclientAddress(e.target.value)}
+            value={client.address}
+            onChange={(e) => setClient({ ...client, address: e.target.value })}
           ></textarea>
         </div>
       </div>
