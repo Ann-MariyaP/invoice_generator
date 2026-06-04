@@ -358,13 +358,6 @@ const PreviewTab = ({
           Download PDF
         </button>
       </div>
-      {/* <button
-        onClick={downloadPDF}
-        disabled={!pdfUrl}
-        className="btn dwnld_btn"
-      >
-        Download PDF
-      </button> */}
 
       {/* LIVE PDF PREVIEW */}
       {pdfUrl && (
