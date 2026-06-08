@@ -39,7 +39,7 @@ const ItemsTab = ({
   const taxAmount = subtotal * (taxRate / 100);
   const discountAmount = subtotal * (discount / 100);
   const total = subtotal + taxAmount - discountAmount;
-  const code = selectedCurrency?.code || "CAD";
+  // const code = selectedCurrency?.code || "CAD";
   const symbol = selectedCurrency?.symbol || "$";
 
   return (

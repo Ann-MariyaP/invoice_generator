@@ -2,10 +2,14 @@ import React, { useState, useEffect } from "react";
 import "./App.scss";
 import "bootstrap/dist/css/bootstrap.min.css";
 import {
-  LiaFileInvoiceSolid,
   LiaFileInvoiceDollarSolid,
 } from "react-icons/lia";
-import { saveInvoice,getNextInvoiceNumber, updateInvoice, getAllInvoices } from "./services/api";
+import {
+  saveInvoice,
+  getNextInvoiceNumber,
+  // updateInvoice,
+  // getAllInvoices,
+} from "./services/api";
 import InvoiceDetailsTab from "./components/InvoiceDetailsTab";
 import ItemsTab from "./components/ItemsTab";
 import PreviewTab from "./components/PreviewTab";
