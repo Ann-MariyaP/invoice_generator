@@ -43,7 +43,7 @@ const ItemsTab = ({
   const symbol = selectedCurrency?.symbol || "$";
 
   return (
-    <div>
+    <div className="ms-1">
       <h5 className="mb-3 labels">Invoice Items</h5>
       <table className="table table-bordered bg-light">
         <thead className="table-secondary">

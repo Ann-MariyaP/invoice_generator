@@ -1,0 +1,51 @@
+.invoice-item {
+  margin: 6px;
+  border-radius: 15px !important;
+  border: none !important;
+  background: linear-gradient(
+    145deg,
+    #ffffff,
+    #f8fafc
+  );
+  transition: all 0.3s ease;
+  cursor: pointer;
+  &:hover {
+    transform: translateY(-4px) scale(1.01);
+  }
+  strong {
+    font-weight: 700;
+  }
+  h6 {
+    margin: 0;
+    font-weight: 600;
+  }
+  small {
+    color: #516889;
+  }
+}
+
+.active-item {
+  background: linear-gradient(
+    135deg,
+    #cdcdf6,
+    #f6f0ff
+  ) !important;
+  color: rgb(255, 255, 255) !important;
+  transform: translateY(-3px);
+  box-shadow: 0 5px 9px rgba(111, 103, 222, 0.35);
+  h6,
+  small,
+  strong{
+    color: rgb(21, 3, 92) !important;
+    font-weight: 600;
+  }
+}
+
+.invoice-item .btn-link {
+  opacity: 0.7;
+  transition: all 0.2s ease;
+  &:hover {
+    opacity: 1;
+    transform: scale(1.15);
+  }
+}

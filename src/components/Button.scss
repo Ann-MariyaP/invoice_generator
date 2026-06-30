@@ -1,0 +1,83 @@
+.custom-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 8px 20px;
+  border-radius: 8px;
+  text-decoration: none;
+  font-weight: 600;
+  transition: all 0.3s ease !important;
+}
+
+.btn-login {
+  background: transparent !important;
+  color: #030c7f !important;
+  border: 1.5px solid #030c7f !important;
+  transition: all 0.3s ease;
+  &:hover {
+  background: #030c7f !important;
+  color: white !important;
+  transform: translateY(-2px);
+  box-shadow: 0 10px 20px rgba(3, 12, 127, 0.2);
+}}
+
+.btn-login-page{
+  background: #030c7f !important;
+  color: white !important;
+  &:hover {
+  background: #030c7f !important;
+  color: white !important;
+  transform: translateY(-2px);
+  box-shadow: 0 10px 20px rgba(3, 12, 127, 0.2);}
+}
+
+.btn-signup-page{
+  background: rgb(108, 37, 138) !important;
+  color: white !important;
+  &:hover{
+  background: rgb(108, 37, 138) !important;
+  color: white !important;
+  transform: translateY(-2px) !important;
+  box-shadow: 0 10px 20px rgba(108, 37, 138, 0.25) !important;
+  }
+}
+.btn-signup {
+  background: transparent !important;
+  color: rgb(108, 37, 138) !important;
+  border: 1.5px solid rgb(108, 37, 138) !important;
+&:hover {
+  background: rgb(108, 37, 138) !important;
+  color: white !important;
+  transform: translateY(-2px) !important;
+  box-shadow: 0 10px 20px rgba(108, 37, 138, 0.25) !important;
+}}
+
+.create-invoice-btn {
+  padding: 10px 18px;
+  white-space: nowrap;
+  background-color: #45258a !important;
+  color: white !important;
+}
+
+.save_seller{
+  background: transparent;
+  color: #7c6efd;
+  border: 1.5px solid #7c6efd;
+  padding: 4px 11px;
+  font-size: 14px;
+  border-radius: 6px;
+}
+
+/* Small devices */
+@media (max-width: 576px) {
+  .create-invoice-btn {
+    padding: 4px 10px;
+    font-size: 11px;
+    border-radius: 6px;
+  }
+  .save_seller{ 
+    font-size: 9px;
+    border-radius: 6px;
+  margin-bottom: 8px;
+}
+}

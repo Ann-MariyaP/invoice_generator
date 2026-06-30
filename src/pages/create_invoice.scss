@@ -4,25 +4,23 @@
     #030c7f 0%,
     rgb(108, 37, 138) 44%,
     rgb(213, 107, 71) 77%,
-    rgb(201, 183, 16) 100%
+    rgb(201, 161, 16) 100%
   );
   -webkit-background-clip: text;
   background-clip: text; // Standard property for modern browsers
   -webkit-text-fill-color: transparent;
   color: transparent; // Fallback for browsers that don't support -webkit-text-fill-color
   display: inline-block; //
-  margin-left: -14px;
 }
 .logo {
   color: #050c6c;
-  font-size: 48px;
-  // margin-block: 2px;
-  padding-right: 3px;
+  font-size: 47px;
+  // margin-bottom: 13px;
 }
 .slogan {
   color: #8b9fc3;
-  margin-top: -8px;
-  margin-left: -14px;
+  margin-top: -15px;
+  margin-bottom: 2px;
 }
 .labels {
   color: #0d114e;
@@ -46,7 +44,7 @@
   border-bottom: 2px solid #e0e0f2 !important;
   border-radius: 0 !important;
   color: #5f6590 !important;
-  background-color: blue(rgb(150, 162, 172));
+  background-color: #96a2ac;
 }
 
 @media (max-width: 991px) {

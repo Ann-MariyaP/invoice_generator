@@ -2,9 +2,9 @@ import "./design.scss";
 import React, { useEffect, useState } from "react";
 import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
-import emailIcon from "../assets/gmail.png";
-import phoneIcon from "../assets/phone.png";
-import locationIcon from "../assets/location.png";
+import emailIcon from "../../assets/gmail.png";
+import phoneIcon from "../../assets/phone.png";
+import locationIcon from "../../assets/location.png";
 
 const PreviewTab = ({
   invoiceNumber,
@@ -98,7 +98,7 @@ const PreviewTab = ({
       doc.text(seller?.name || "Company Name", 15, margin + 17);
       doc.setFont("helvetica", "bold");
       doc.setFontSize(10);
-      doc.text(seller?.address || "", 15, margin + 25);
+      // doc.text(seller?.address || "", 15, margin + 25);
       doc.text(seller?.email || "", 15, margin + 31);
       doc.text(seller?.phone || "", 15, margin + 38);
 
@@ -346,7 +346,7 @@ const PreviewTab = ({
   };
 
   return (
-    <div>
+    <div className="ms-1">
       <div className="button-group">
         <button className="btn btn--save" onClick={handleSaveInvoice}>
           Save Invoice
