@@ -1,6 +1,5 @@
 import React from "react";
 import "./design.scss";
-import { Select } from "antd";
 import TextBox from "../../components/TextBox";
 import Button from "../../components/button";
 import { SiNamecheap } from "react-icons/si";
@@ -17,6 +16,7 @@ const InvoiceDetailsTab = ({
   setDueDate,
   seller,
   setSeller,
+  defaultSeller,
   client,
   setClient,
   setActiveTab,
@@ -24,7 +24,6 @@ const InvoiceDetailsTab = ({
   setStatus,
   onSaveSeller
 }) => {
-  const { Option } = Select;
   return (
     <div className="ms-1">
       <h5 className="mb-3 labels">Invoice Details</h5>
@@ -35,17 +34,15 @@ const InvoiceDetailsTab = ({
         </div>
         <div className="col-md-6">
           <label className="labels">Currency</label>
-          <Select
+          <TextBox
+            type="select"
             value={selectedCurrency}
-            onChange={(value) => setSelectedCurrency(value)}
-            style={{ width: "100%" }}
-          >
-            {currencies.map((currency) => (
-              <Option key={currency.code} value={currency.code}>
-                {currency.code} {currency.symbol}- {currency.name}
-              </Option>
-            ))}
-          </Select>
+            onChange={setSelectedCurrency}
+            options={currencies.map((currency) => ({
+              value: currency.code,
+              label: `${currency.code} ${currency.symbol} - ${currency.name}`,
+            }))}
+          />
         </div>
       </div>
 
@@ -65,16 +62,16 @@ const InvoiceDetailsTab = ({
         </div>
         <div className="col-md-4">
           <label className="labels">Status</label>
-
-          <Select
+          <TextBox
+            type="select"
             value={status}
             onChange={setStatus}
-            style={{ width: "100%" }}
+            placeholder="Select Status"
             options={[
               { value: "Draft", label: "Draft" },
               { value: "Pending", label: "Pending" },
               { value: "Paid", label: "Paid" },
-              { value: "Overdue", label: "Overdue" },
+              { value: "Cancelled", label: "Cancelled" },
             ]}
           />
         </div>
@@ -84,7 +81,7 @@ const InvoiceDetailsTab = ({
       <div className="d-flex justify-content-between align-items-center mb-3">
         <h6 className="labels">Your Information </h6>
         <Button type="submit" variant="save_seller" onClick={onSaveSeller}>
-          Save Your Info
+          {defaultSeller?._id ? "Update your Info" : "Add your Info"}
         </Button>
       </div>
       <div className="row mb-3">
@@ -215,29 +212,29 @@ const InvoiceDetailsTab = ({
       <div className="row mb-3">
         <div className="col-md-4">
           <label className="labels">Client Name</label>
-          <input
+          <TextBox
             type="text"
-            className="form-control"
+            placeholder="Enter client name or company name"
             value={client.name}
-            onChange={(e) => setClient({ ...client, name: e.target.value })}
+            onChange={(value) => setClient({ ...client, name: value })}
           />
         </div>
         <div className="col-md-4">
           <label className="labels">Email</label>
-          <input
+          <TextBox
             type="email"
-            className="form-control"
+            placeholder="Enter client mail ID"
             value={client.email}
-            onChange={(e) => setClient({ ...client, email: e.target.value })}
+            onChange={(value) => setClient({ ...client, email: value })}
           />
         </div>
         <div className="col-md-4">
           <label className="labels">Phone</label>
-          <input
+          <TextBox
             type="tel"
-            className="form-control"
+            placeholder="Enter client phone number"
             value={client.phone}
-            onChange={(e) => setClient({ ...client, phone: e.target.value })}
+            onChange={(value) => setClient({ ...client, phone: value })}
           />
         </div>
       </div>
@@ -331,7 +328,7 @@ const InvoiceDetailsTab = ({
       </div>
 
       <button
-        className="btn btn-primary mt-3"
+        className="btn btn-primary mb-3"
         onClick={() => setActiveTab("items")}
       >
         Continue to Items

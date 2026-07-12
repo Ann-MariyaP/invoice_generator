@@ -19,8 +19,11 @@ const PreviewTab = ({
   taxRate,
   discount,
   handleSaveInvoice,
+  isLoggedIn,
+  isSaved,
 }) => {
   const [pdfUrl, setPdfUrl] = useState(null);
+
 
   // --- CALCULATIONS ---
   const subtotal = items.reduce(
@@ -49,8 +52,12 @@ const PreviewTab = ({
       const marginLeft = 12;
       const marginRight = 192;
 
-      const code = selectedCurrency.code || "CAD";
-      const symbol = selectedCurrency.symbol || "$";
+      const currencyInfo = currencies.find(
+        (currency) => currency.code === selectedCurrency,
+      );
+
+      const code = currencyInfo?.code || "CAD";
+      const symbol = currencyInfo?.symbol || "$";
       const headerColor = [88, 120, 140];
       const mainText = [67, 74, 79];
 
@@ -66,8 +73,13 @@ const PreviewTab = ({
         doc.text(seller?.name || "Company Name", marginLeft, margin + 7);
         doc.setFontSize(8);
         doc.text(`Bill To: ${client?.name}` || "", marginLeft, margin + 12);
-        doc.text(invoiceNumber || "", 185, margin + 7);
-        doc.text(invoiceDate || "", 188, margin + 12);
+        doc.text(invoiceNumber || "", 179, margin + 7);
+        // doc.text(invoiceDate || "", 188, margin + 12);
+        doc.text(
+          invoiceDate ? new Date(invoiceDate).toLocaleDateString("en-CA") : "",
+          189,
+          margin + 12,
+        );
         doc.setFillColor(...headerColor);
         doc.rect(marginLeft, margin + 14, marginRight, 0.1, "F");
       };
@@ -98,9 +110,31 @@ const PreviewTab = ({
       doc.text(seller?.name || "Company Name", 15, margin + 17);
       doc.setFont("helvetica", "bold");
       doc.setFontSize(10);
-      // doc.text(seller?.address || "", 15, margin + 25);
-      doc.text(seller?.email || "", 15, margin + 31);
-      doc.text(seller?.phone || "", 15, margin + 38);
+      const sellerAddress = seller?.address
+        ? [
+            seller.address.street,
+            seller.address.city,
+            seller.address.state,
+            seller.address.country,
+          ]
+            .filter(Boolean)
+            .join(", ")
+        : "";
+
+      doc.text(sellerAddress, 15, margin + 25);
+
+      const sellerPostalCode = seller?.address?.postalCode
+        ? String(seller.address.postalCode)
+        : "";
+
+      let sellerInfoY = margin + 31;
+      if (sellerPostalCode) {
+        doc.text(sellerPostalCode, 15, sellerInfoY);
+        sellerInfoY += 7;
+      }
+      doc.text(seller?.email ? String(seller.email) : "", 15, sellerInfoY);
+      sellerInfoY += 7;
+      doc.text(seller?.phone ? String(seller.phone) : "", 15, sellerInfoY);
 
       // INVOICE INFO
       doc.setFontSize(14);
@@ -115,14 +149,25 @@ const PreviewTab = ({
       doc.text("DATE", 199, margin + 25, {
         align: "right",
       });
-      doc.text(invoiceDate || "", 199, margin + 31, {
+
+      const formattedInvoiceDate = invoiceDate
+        ? new Date(invoiceDate).toLocaleDateString("en-CA")
+        : "";
+
+      doc.text(formattedInvoiceDate, 199, margin + 31, {
         align: "right",
       });
+      const formattedDueDate = dueDate
+        ? new Date(dueDate).toLocaleDateString("en-CA")
+        : "";
+
       doc.text(dueDate ? "DUE" : "", 199, margin + 39, { align: "right" });
-      doc.text(dueDate || "", 199, margin + 44, { align: "right" });
+      doc.text(formattedDueDate, 199, margin + 44, { align: "right" });
+
       doc.text("BALANCE DUE", 199, dueDate ? margin + 53 : margin + 41, {
         align: "right",
       });
+
       doc.text(
         `${code} ${symbol} ${total.toFixed(2)}`,
         199,
@@ -131,7 +176,6 @@ const PreviewTab = ({
           align: "right",
         },
       );
-
       // BILL TO
       doc.setFontSize(9);
       doc.setTextColor(150, 162, 172);
@@ -140,7 +184,20 @@ const PreviewTab = ({
       doc.setTextColor(67, 74, 79);
       doc.text(client?.name || "", 15, dueDate ? margin + 77 : margin + 68);
       doc.setFontSize(10);
-      if (client?.address) {
+
+      const clientAddress = client?.address
+        ? [
+            client.address.street,
+            client.address.city,
+            client.address.state,
+            client.address.postalCode,
+            client.address.country,
+          ]
+            .filter(Boolean)
+            .join(", ")
+        : "";
+
+      if (clientAddress) {
         doc.addImage(
           locationIcon,
           "PNG",
@@ -149,8 +206,10 @@ const PreviewTab = ({
           4,
           4,
         );
+
+        doc.text(clientAddress, 20, dueDate ? margin + 84 : margin + 75);
       }
-      doc.text(client?.address || "", 20, dueDate ? margin + 84 : margin + 75);
+
       if (client?.email) {
         doc.addImage(
           emailIcon,
@@ -162,6 +221,7 @@ const PreviewTab = ({
         );
       }
       doc.text(client?.email || "", 20, dueDate ? margin + 90 : margin + 81);
+
       if (client?.phone) {
         doc.addImage(
           phoneIcon,
@@ -295,14 +355,17 @@ const PreviewTab = ({
         notesY = 30;
       }
 
-      doc.setFontSize(11);
-      doc.setFont("helvetica", "bold");
-      doc.text("Additional Notes:", 15, notesY + 2);
-      doc.setFont("helvetica", "normal");
-      doc.text(notes || "", 15, notesY + 8, {
-        maxWidth: 190,
-        align: "left",
-      });
+     if (notes?.trim()) {
+       doc.setFontSize(11);
+       doc.setFont("helvetica", "bold");
+       doc.text("Additional Notes:", 15, notesY + 2);
+
+       doc.setFont("helvetica", "normal");
+       doc.text(notes, 15, notesY + 8, {
+         maxWidth: 190,
+         align: "left",
+       });
+     }
 
       // ------------------------
       // FOOTERS AFTER ALL CONTENT
@@ -348,21 +411,26 @@ const PreviewTab = ({
   return (
     <div className="ms-1">
       <div className="button-group">
-        <button className="btn btn--save" onClick={handleSaveInvoice}>
-          Save Invoice
-        </button>
+        {isLoggedIn && (
+          <button className="btn btn--save" onClick={handleSaveInvoice}>
+            Save Invoice
+          </button>
+        )}
+        {isSaved && (
         <button
-          className="btn btn--download" onClick={downloadPDF}
-        disabled={!pdfUrl}
+          className="btn btn--download"
+          onClick={downloadPDF}
+          disabled={!pdfUrl}
         >
           Download PDF
         </button>
+        )}
       </div>
 
       {/* LIVE PDF PREVIEW */}
       {pdfUrl && (
         <iframe
-          src={`${pdfUrl}#view=fitH&zoom=page-width`}
+          src={`${pdfUrl}#toolbar=0&view=fitH&zoom=page-width`}
           width="100%"
           height="100%"
           style={{

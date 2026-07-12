@@ -14,6 +14,8 @@ export default function Dashboard({ userName, onLogout, onUpdate }) {
   const [user, setUser] = useState(null);
   const [invoices, setInvoices] = useState([]);
   const [selectedInvoice, setSelectedInvoice] = useState(null);
+ const [selectedInvoiceId, setSelectedInvoiceId] = useState(null);
+ const [deleteModal, setDeleteModal] = useState(false);
   const [loading, setLoading] = useState(true);
   const [showMobilePreview, setShowMobilePreview] = useState(false);
 
@@ -64,7 +66,7 @@ export default function Dashboard({ userName, onLogout, onUpdate }) {
 
   const handleSelectInvoice = (invoice) => {
     setSelectedInvoice(invoice);
-
+  // setSelectedInvoiceId(invoice._id);
     if (window.innerWidth < 992) {
       setShowMobilePreview(true);
     }
@@ -74,16 +76,31 @@ export default function Dashboard({ userName, onLogout, onUpdate }) {
     navigate(`/create_invoice/${id}`);
   };
 
-  const handleDelete = async (id, e) => {
-    e.stopPropagation(); // important (prevents row click)
+  // const handleDelete = async (id, e) => {
+  //   e.stopPropagation(); // important (prevents row click)
 
+  //   try {
+  //     await deleteInvoice(id);
+  //     // remove from UI
+  //     setInvoices((prev) => prev.filter((inv) => inv._id !== id));
+  //   } catch (err) {
+  //     console.log(err);
+  //     alert("Delete failed");
+  //   }
+  // };
+
+  const handleDelete = async (id) => {
     try {
+      console.log("Deleting:", id);
+
       await deleteInvoice(id);
-      // remove from UI
       setInvoices((prev) => prev.filter((inv) => inv._id !== id));
     } catch (err) {
       console.log(err);
       alert("Delete failed");
+    } finally {
+      setDeleteModal(false);
+      setSelectedInvoiceId(null);
     }
   };
   const getStatusBadge = (status) => {
@@ -118,24 +135,28 @@ export default function Dashboard({ userName, onLogout, onUpdate }) {
           <Button
             onClick={() => navigate("/create_invoice")}
             variant="create_invoice_btn"
-           
           >
             Create Invoice
           </Button>
         </div>
 
         <div className="row g-4">
-          <div className="col-lg-7">
+          <div className="col-lg-7 col-md-7">
             <InvoiceList
               invoices={invoices}
               selectedInvoice={selectedInvoice}
+              setSelectedInvoice={setSelectedInvoice}
               handleSelectInvoice={handleSelectInvoice}
               handleDelete={handleDelete}
               getStatusBadge={getStatusBadge}
+              deleteModal={deleteModal}
+              setDeleteModal={setDeleteModal}
+              selectedInvoiceId={selectedInvoiceId}
+              setSelectedInvoiceId={setSelectedInvoiceId}
             />
           </div>
 
-          <div className="col-lg-5 desktop-preview mt-4 pt-2">
+          <div className="col-lg-5 col-md-5 desktop-preview mt-4 pt-2">
             <ShortPreview invoice={selectedInvoice} onUpdate={handleUpdate} />
           </div>
         </div>

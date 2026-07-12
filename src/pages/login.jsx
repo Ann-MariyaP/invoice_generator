@@ -1,7 +1,9 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { loginUser } from "../services/api";
+import TextBox from "../components/TextBox";
 import Button from "../components/button";
+import { message } from "antd";
 
 const Login = () => {
   const navigate = useNavigate();
@@ -19,10 +21,16 @@ const Login = () => {
       });
 
       localStorage.setItem("token", response.data.token);
-      // alert("Login successful");
+       message.success({
+              content: "Login successful!",
+              duration: 4,
+            });
       navigate("/dashboard");
     } catch (error) {
-      alert(error.response?.data?.message || "Login failed");
+      message.error({
+        content: error.response?.data?.message || "Failed to login!",
+        duration: 4,
+      });
     }
   };
 
@@ -34,22 +42,20 @@ const Login = () => {
         <form onSubmit={handleLogin}>
           <div className="mb-3">
             <label>Email</label>
-            <input
+            <TextBox
               type="email"
-              className="form-control"
               value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              placeholder="Enter email"
+              placeholder="Enter your email"
+              onChange={setEmail}
             />
           </div>
 
           <div className="mb-3">
             <label>Password</label>
-            <input
+            <TextBox
               type="password"
-              className="form-control"
               value={password}
-              onChange={(e) => setPassword(e.target.value)}
+              onChange={setPassword}
               placeholder="Enter password"
             />
           </div>

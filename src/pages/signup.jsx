@@ -1,7 +1,9 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { signupUser } from "../services/api";
+import TextBox from "../components/TextBox";
 import Button from "../components/button";
+import { message } from "antd";
 
 const Signup = () => {
   const navigate = useNavigate();
@@ -21,15 +23,19 @@ const Signup = () => {
 
     try {
       await signupUser(form);
-
-      alert("Signup successful");
+      message.success({
+        content: "Signup successful!",
+        duration: 4,
+      });
       navigate("/login"); // redirect after signup
     } catch (err) {
       console.log(err);
-      alert("Signup failed");
+      message.error({
+        content: "Failed to sign up",
+        duration: 4,
+      });
     }
   };
-
 
   return (
     <div className="container d-flex justify-content-center align-items-center vh-100">
@@ -39,41 +45,59 @@ const Signup = () => {
         <form onSubmit={handleSignup}>
           <div className="mb-3">
             <label>Name</label>
-            <input
+            {/* <input
               name="name"
               type="text"
               className="form-control"
               value={form.name}
               onChange={handleChange}
               placeholder="Enter name"
+            /> */}
+            <TextBox
+              type="text"
+              value={form.name}
+              placeholder="Enter your name"
+              onChange={(value) => setForm({ ...form, name: value })}
             />
           </div>
 
           <div className="mb-3">
             <label>Email</label>
-            <input
+            {/* <input
               name="email"
               type="email"
               className="form-control"
               value={form.email}
               onChange={handleChange}
               placeholder="Enter email"
+            /> */}
+            <TextBox
+              type="email"
+              value={form.email}
+              placeholder="Enter your mail ID"
+              onChange={(value) => setForm({ ...form, email: value })}
             />
           </div>
 
           <div className="mb-3">
             <label>Password</label>
-            <input
+            {/* <input
               name="password"
               type="password"
               className="form-control"
               value={form.password}
               onChange={handleChange}
               placeholder="Enter password"
+            /> */}
+            <TextBox
+              type="password"
+              value={form.password}
+              placeholder="Enter a strong password"
+              onChange={(value) => setForm({ ...form, password: value })}
             />
           </div>
 
-          <Button  type="submit" variant="signup_page" className="w-100">
+          <Button type="submit" variant="signup_page" className="w-100">
             Signup
           </Button>
         </form>

@@ -8,7 +8,6 @@ import { LiaFileInvoiceDollarSolid } from "react-icons/lia";
 import { HiMenu, HiX, HiOutlineMenu, HiCheckCircle } from "react-icons/hi";
 import {
   saveInvoice,
-  getNextInvoiceNumber,
   getInvoice,
   updateInvoice,
   getAllSenders,
@@ -17,17 +16,21 @@ import {
   setDefaultSender,
   updateSender,
   deleteSender,
+  getInvoicePreview,
 } from "../services/api";
 import InvoiceDetailsTab from "./tabs/InvoiceDetailsTab";
 import ItemsTab from "./tabs/ItemsTab";
 import PreviewTab from "./tabs/PreviewTab";
-import { Dropdown, Button } from "antd";
 import { DownOutlined } from "@ant-design/icons";
+import { Dropdown, message } from "antd";
+import Button from "../components/button";
 import Modal from "../components/modal";
+import TextBox from "../components/TextBox";
 
 function CreateInvoice() {
   const navigate = useNavigate();
   const { id } = useParams();
+  const today = dayjs();
 
   const [activeTab, setActiveTab] = useState("details");
   const [invoiceNumber, setInvoiceNumber] = useState("");
@@ -67,13 +70,17 @@ function CreateInvoice() {
   const [discount, setDiscount] = useState(0);
   const [selectedCurrency, setSelectedCurrency] = useState("CAD");
   const [showModal, setShowModal] = useState(false);
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
 
+  const [isSaved, setIsSaved] = useState(false);
   const isLoggedIn = !!localStorage.getItem("token");
   const handleSaveInvoice = async () => {
+    console.log("Invoice payload:", {
+      currencyCode: selectedCurrency,
+    });
     const invoiceData = {
-      invoiceDate: invoiceDate?.format("DD-MM-YYYY"),
-      dueDate: dueDate?.format("YYYY-MM-DD"),
+      invoiceDate: invoiceDate ? invoiceDate.format("YYYY-MM-DD") : null,
+      dueDate: dueDate ? dueDate.format("YYYY-MM-DD") : null,
+      currencyCode: selectedCurrency,
       status,
       sender: {
         name: seller?.name || "",
@@ -103,25 +110,26 @@ function CreateInvoice() {
       notes,
       taxRate,
       discount,
-      currencyCode: selectedCurrency,
     };
-
-    if (!id) {
-      invoiceData.invoiceNumber = invoiceNumber;
-    }
 
     try {
       let response;
 
       if (id) {
+         console.log("Invoice payload:", invoiceData);
         response = await updateInvoice(id, invoiceData);
-        alert("Invoice updated successfully!");
+         message.success("Invoice updated successfully!");
+        setIsSaved(true);
       } else {
         response = await saveInvoice(invoiceData);
 
         const newInvoiceNumber = response.data.invoiceNumber;
         setInvoiceNumber(newInvoiceNumber);
-        alert("Invoice saved successfully!");
+         message.success({
+           content: "Invoice saved successfully!",
+           duration: 4, 
+         });
+         setIsSaved(true);
       }
 
       console.log(response.data);
@@ -132,11 +140,11 @@ function CreateInvoice() {
 
   const fetchInvoiceNumber = async () => {
     try {
-      const response = await getNextInvoiceNumber();
-
+      const response = await getInvoicePreview();
+ console.log("Preview invoice response:", response.data);
       setInvoiceNumber(response.data.invoiceNumber);
     } catch (error) {
-      console.error(error);
+      console.error("Error fetching invoice preview:", error);
     }
   };
   // update invoice
@@ -157,7 +165,7 @@ function CreateInvoice() {
       setNotes(invoice.additionalNotes ?? "");
       setTaxRate(invoice.taxRate ?? 0);
       setDiscount(invoice.discount ?? 0);
-      setSelectedCurrency(invoice.currency ?? "");
+      setSelectedCurrency(invoice.currencyCode ?? "");
     } catch (error) {
       console.log(error);
     }
@@ -174,14 +182,17 @@ function CreateInvoice() {
 
   const handleCreateSeller = async () => {
     try {
-      const { data } = await createSender(seller);
-
-      console.log("Seller created:", data);
-
+      if (defaultSeller?._id) {
+        const { data } = await updateSender(defaultSeller._id, seller);
+          message.success("Your Info updated successfully!");
+      } else {
+        const { data } = await createSender(seller);
+        message.success("Your Info has been added!");
+      }
       await loadSellers();
       await loadDefaultSeller();
     } catch (error) {
-      console.error("Error creating seller:", error);
+      console.error("Error saving seller:", error);
     }
   };
 
@@ -200,24 +211,24 @@ function CreateInvoice() {
     }
   };
 
-   const handleSetDefault = async (id) => {
-     try {
-       await setDefaultSender(id);
-       await loadSellers(); // Refresh isDefault flags
-       await loadDefaultSeller();
-     } catch (error) {
-       console.error(error);
-     }
-   };
+  const handleSetDefault = async (id) => {
+    try {
+      await setDefaultSender(id);
+      await loadSellers(); // Refresh isDefault flags
+      await loadDefaultSeller();
+    } catch (error) {
+      console.error(error);
+    }
+  };
 
-   const [selectedSellerId, setSelectedSellerId] = useState(null);
-   const handleSelectSeller = (sellerId) => {
-     const selected = sellers.find((s) => s._id === sellerId);
-     if (selected) {
-       setSelectedSellerId(sellerId); // dropdown control
-       setSeller(selected);
-     }
-   };
+  const [selectedSellerId, setSelectedSellerId] = useState(null);
+  const handleSelectSeller = (sellerId) => {
+    const selected = sellers.find((s) => s._id === sellerId);
+    if (selected) {
+      setSelectedSellerId(sellerId); // dropdown control
+      setSeller(selected);
+    }
+  };
 
   const loadDefaultSeller = async () => {
     try {
@@ -250,12 +261,8 @@ function CreateInvoice() {
         break;
 
       case "logout":
-        try {
-          await logoutUser();
-        } finally {
-          localStorage.removeItem("token");
-          navigate("/login");
-        }
+        localStorage.removeItem("token");
+        navigate("/login");
         break;
 
       default:
@@ -320,22 +327,41 @@ function CreateInvoice() {
           </div>
         </div>
 
-        {/* RIGHT SIDE (DESKTOP) */}
-        <div className="ms-auto d-none d-md-flex align-items-center gap-3 flex-shrink-0">
+        {/* RIGHT SIDE */}
+        <div className="ms-auto d-flex align-items-center gap-3 flex-shrink-0">
           {!isLoggedIn ? (
             <>
-              <span className="text-muted small">Continue as Guest</span>
+              {/* Desktop */}
+              <div className="d-none d-md-flex align-items-center gap-3">
+                <span className="text-muted small">Continue as Guest</span>
 
-              <button className="btn btn-outline-secondary btn-sm">
-                Login
-              </button>
+                <Button onClick={() => navigate("/login")} variant="login">
+                  Login
+                </Button>
 
-              <button
-                className="btn btn-primary btn-sm"
-                style={{ backgroundColor: "#1e3a8a", borderColor: "#1e3a8a" }}
-              >
-                Sign Up
-              </button>
+                <Button onClick={() => navigate("/signup")} variant="signup">
+                  Signup
+                </Button>
+              </div>
+
+              {/* Mobile */}
+              <div className="d-md-none">
+                <Dropdown
+                  menu={{
+                    items: [
+                      { key: "/login", label: "Login" },
+                      { key: "/signup", label: "Signup" },
+                    ],
+                    onClick: ({ key }) => navigate(key),
+                  }}
+                >
+                  <span>
+                    <Button variant="menu_btn">
+                      <HiOutlineMenu />
+                    </Button>
+                  </span>
+                </Dropdown>
+              </div>
             </>
           ) : (
             <Dropdown
@@ -349,53 +375,21 @@ function CreateInvoice() {
               }}
               trigger={["click"]}
             >
-              <Button>
-                Menu <HiOutlineMenu />
-              </Button>
+              <div>
+                <span className="d-none d-sm-flex">
+                  <Button variant="menu_btn">
+                    Menu <HiOutlineMenu />
+                  </Button>
+                </span>
+                <span className="d-sm-none">
+                  <Button variant="menu_btn">
+                    <HiOutlineMenu />
+                  </Button>
+                </span>
+              </div>
             </Dropdown>
           )}
         </div>
-
-        {/* MOBILE MENU BUTTON */}
-        <div className="d-md-none ms-auto">
-          <button
-            className="btn btn-link text-dark p-1"
-            onClick={() => setIsMenuOpen(!isMenuOpen)}
-          >
-            {isMenuOpen ? <HiX size={20} /> : <HiMenu size={20} />}
-          </button>
-        </div>
-
-        {/* MOBILE MENU */}
-        {isMenuOpen && (
-          <div className="d-md-none w-100 border-top mt-2 pt-3">
-            {!isLoggedIn ? (
-              <div className="d-grid gap-2">
-                <button className="btn btn-outline-secondary w-100">
-                  Login
-                </button>
-
-                <button
-                  className="btn btn-primary w-100"
-                  style={{ backgroundColor: "#1e3a8a", borderColor: "#1e3a8a" }}
-                >
-                  Sign Up
-                </button>
-
-                <div className="text-center text-muted small pt-2">
-                  Running in Guest Mode
-                </div>
-              </div>
-            ) : (
-              <button
-                className="btn btn-primary btn-sm"
-                onClick={() => navigate("/dashboard")}
-              >
-                Dashboard
-              </button>
-            )}
-          </div>
-        )}
       </div>
 
       <ul className="nav mb-3" style={{ paddingTop: "89px" }}>
@@ -446,6 +440,7 @@ function CreateInvoice() {
           setStatus={setStatus}
           seller={seller}
           setSeller={setSeller}
+          defaultSeller={defaultSeller}
           client={client}
           setClient={setClient}
           setActiveTab={setActiveTab}
@@ -464,6 +459,8 @@ function CreateInvoice() {
           discount={discount}
           setDiscount={setDiscount}
           setActiveTab={setActiveTab}
+          currencies={currencies}
+          selectedCurrency={selectedCurrency}
         />
       )}
 
@@ -481,6 +478,8 @@ function CreateInvoice() {
           taxRate={taxRate}
           discount={discount}
           handleSaveInvoice={handleSaveInvoice}
+          isLoggedIn={isLoggedIn}
+          isSaved={isSaved}
         />
       )}
     </div>

@@ -16,6 +16,7 @@ const Button = ({
     signup: "btn-signup",
     create_invoice_btn: "create-invoice-btn",
     save_seller: "save_seller",
+    menu_btn: "menu_btn",
   };
 
   return (

@@ -2,7 +2,7 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  padding: 8px 20px;
+  padding: 6px 20px;
   border-radius: 8px;
   text-decoration: none;
   font-weight: 600;
@@ -61,11 +61,17 @@
 
 .save_seller{
   background: transparent;
-  color: #7c6efd;
-  border: 1.5px solid #7c6efd;
+  color: #8781fe;
+  border: 1.5px solid #8781fe;
   padding: 4px 11px;
   font-size: 14px;
-  border-radius: 6px;
+}
+.menu_btn{
+  background: transparent;
+  color: #625d8b;
+  border: 1.5px solid #625d8b;
+  padding: 4px 11px;
+  font-size: 14px;
 }
 
 /* Small devices */

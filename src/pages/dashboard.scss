@@ -111,9 +111,9 @@ $text-muted: #6b7280;
 /* Tablets */
 @media (max-width: 991px) {
   .dashboard {
-    .preview-card {
-      position: static;
-    }
+    // .desktop-preview {
+    //   display: none !important;
+    // }
     .welcome-section {
       text-align: center;
     }

@@ -34,13 +34,17 @@ const ItemsTab = ({
 
   const subtotal = items.reduce(
     (sum, item) => sum + item.quantity * item.price,
-    0
+    0,
   );
   const taxAmount = subtotal * (taxRate / 100);
   const discountAmount = subtotal * (discount / 100);
   const total = subtotal + taxAmount - discountAmount;
   // const code = selectedCurrency?.code || "CAD";
-  const symbol = selectedCurrency?.symbol || "$";
+  const currencyInfo = currencies.find(
+    (currency) => currency.code === selectedCurrency,
+  );
+
+  const symbol = currencyInfo?.symbol || "$";
 
   return (
     <div className="ms-1">
@@ -89,7 +93,7 @@ const ItemsTab = ({
               </td>
               <td>
                 <div className="d-flex justify-content-between align-items-center pt-2">
-                  ${(item.quantity * item.price).toFixed(2)}{" "}
+                  {symbol} {(item.quantity * item.price).toFixed(2)}{" "}
                   {idx !== 0 && (
                     <AiOutlineClose
                       onClick={() => removeItem(idx)}
@@ -146,27 +150,31 @@ const ItemsTab = ({
       </div>
 
       <div className="p-3 bg-light rounded mb-4">
-        <p className="labels">Subtotal: ${subtotal.toFixed(2)}</p>
         <p className="labels">
-          Tax ({taxRate}%): ${taxAmount.toFixed(2)}
+          Subtotal: {symbol} {subtotal.toFixed(2)}
+        </p>
+        <p className="labels">
+          Tax ({taxRate}%): {symbol} {taxAmount.toFixed(2)}
         </p>
 
         <p className="labels">
           Discount ({discount}%): -{symbol} {discountAmount.toFixed(2)}
         </p>
 
-        <h5 className="labels">Total: ${total.toFixed(2)}</h5>
+        <h5 className="labels">
+          Total: {symbol} {total.toFixed(2)}
+        </h5>
       </div>
 
       <div className="d-flex justify-content-between">
         <button
-          className="btn btn-secondary"
+          className="btn btn-secondary mb-3"
           onClick={() => setActiveTab("details")}
         >
           Back
         </button>
         <button
-          className="btn btn-primary"
+          className="btn btn-primary mb-3"
           onClick={() => setActiveTab("preview")}
         >
           Preview

@@ -15,8 +15,11 @@ api.interceptors.request.use((config) => {
 export const signupUser = (userData) => api.post("api/auth/signup", userData);
 export const loginUser = (userData) => api.post("api/auth/login", userData);
 export const saveInvoice = (data) => api.post("/api/invoices", data);
-export const getNextInvoiceNumber = () => {
-  return api.get("/api/invoices/next-number");
+// export const getNextInvoiceNumber = () => {
+//   return api.get("/api/invoices/next-number");
+// };
+export const getInvoicePreview = () => {
+  return api.get("/api/invoices/preview-number");
 };
 export const getAllInvoices = () => api.get("/api/invoices");
 export const getInvoice = (id) => api.get(`/api/invoices/${id}`);
