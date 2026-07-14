@@ -68,10 +68,18 @@ const Login = () => {
         <p className="text-center mt-3">
           Don't have an account?{" "}
           <span
-            style={{ cursor: "pointer", color: "blue" }}
+            style={{ cursor: "pointer", color: "#1023b5" }}
             onClick={() => navigate("/signup")}
           >
             Signup
+          </span>
+        </p>
+        <p className="text-center">
+          <span
+            style={{ cursor: "pointer", color: "#636a86", fontSize: "15px" }}
+            onClick={() => navigate("/")}
+          >
+            ← Back to Home
           </span>
         </p>
       </div>

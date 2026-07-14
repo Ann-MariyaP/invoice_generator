@@ -416,14 +416,14 @@ const PreviewTab = ({
             Save Invoice
           </button>
         )}
-        {isSaved && (
-        <button
-          className="btn btn--download"
-          onClick={downloadPDF}
-          disabled={!pdfUrl}
-        >
-          Download PDF
-        </button>
+        {(isSaved || !isLoggedIn) && (
+          <button
+            className="btn btn--download"
+            onClick={downloadPDF}
+            disabled={!pdfUrl}
+          >
+            Download PDF
+          </button>
         )}
       </div>
 

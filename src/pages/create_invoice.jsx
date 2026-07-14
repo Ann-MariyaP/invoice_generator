@@ -427,6 +427,7 @@ function CreateInvoice() {
 
       {activeTab === "details" && (
         <InvoiceDetailsTab
+          isLoggedIn={isLoggedIn}
           invoiceNumber={invoiceNumber}
           setInvoiceNumber={setInvoiceNumber}
           currencies={currencies}

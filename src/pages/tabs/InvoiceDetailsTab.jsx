@@ -5,6 +5,7 @@ import Button from "../../components/button";
 import { SiNamecheap } from "react-icons/si";
 
 const InvoiceDetailsTab = ({
+  isLoggedIn,
   invoiceNumber,
   setInvoiceNumber,
   currencies,
@@ -22,7 +23,7 @@ const InvoiceDetailsTab = ({
   setActiveTab,
   status,
   setStatus,
-  onSaveSeller
+  onSaveSeller,
 }) => {
   return (
     <div className="ms-1">
@@ -80,9 +81,11 @@ const InvoiceDetailsTab = ({
       <hr />
       <div className="d-flex justify-content-between align-items-center mb-3">
         <h6 className="labels">Your Information </h6>
-        <Button type="submit" variant="save_seller" onClick={onSaveSeller}>
-          {defaultSeller?._id ? "Update your Info" : "Add your Info"}
-        </Button>
+        {isLoggedIn && (
+          <Button type="submit" variant="save_seller" onClick={onSaveSeller}>
+            {defaultSeller?._id ? "Update your Info" : "Add your Info"}
+          </Button>
+        )}
       </div>
       <div className="row mb-3">
         <div className="col-md-4">

@@ -45,32 +45,16 @@ const Signup = () => {
         <form onSubmit={handleSignup}>
           <div className="mb-3">
             <label>Name</label>
-            {/* <input
-              name="name"
-              type="text"
-              className="form-control"
-              value={form.name}
-              onChange={handleChange}
-              placeholder="Enter name"
-            /> */}
             <TextBox
               type="text"
               value={form.name}
-              placeholder="Enter your name"
+              placeholder="Enter your full name"
               onChange={(value) => setForm({ ...form, name: value })}
             />
           </div>
 
           <div className="mb-3">
             <label>Email</label>
-            {/* <input
-              name="email"
-              type="email"
-              className="form-control"
-              value={form.email}
-              onChange={handleChange}
-              placeholder="Enter email"
-            /> */}
             <TextBox
               type="email"
               value={form.email}
@@ -81,14 +65,6 @@ const Signup = () => {
 
           <div className="mb-3">
             <label>Password</label>
-            {/* <input
-              name="password"
-              type="password"
-              className="form-control"
-              value={form.password}
-              onChange={handleChange}
-              placeholder="Enter password"
-            /> */}
             <TextBox
               type="password"
               value={form.password}
@@ -105,10 +81,18 @@ const Signup = () => {
         <p className="text-center mt-3">
           Already have an account?{" "}
           <span
-            style={{ cursor: "pointer", color: "blue" }}
+            style={{ cursor: "pointer", color: "#1023b5" }}
             onClick={() => navigate("/login")}
           >
             Login
+          </span>
+        </p>
+        <p className="text-center">
+          <span
+            style={{ cursor: "pointer", color: "#636a86", fontSize: "15px" }}
+            onClick={() => navigate("/")}
+          >
+            ← Back to Home
           </span>
         </p>
       </div>
