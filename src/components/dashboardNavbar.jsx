@@ -1,17 +1,42 @@
 import { useState } from "react";
 import CustomModal from "./modal";
+import { Dropdown } from "antd";
 import { LiaFileInvoiceDollarSolid } from "react-icons/lia";
 import { HiLogout } from "react-icons/hi";
 import { useNavigate } from "react-router-dom";
 
-export default function DashboardNavbar({ userName, userInitials }) {
+export default function DashboardNavbar({
+  userName,
+  userInitials,
+  handleDeleteAccount,
+  deleteAccountModal,
+  setDeleteAccountModal,
+  }) {
   const navigate = useNavigate();
   const [logoutOpen, setLogoutOpen] = useState(false);
+
   const handleLogout = () => {
     localStorage.removeItem("token");
     setLogoutOpen(false);
     navigate("/");
   };
+
+  const items = [
+    {
+      key: "logout",
+      label: (
+        <span onClick={() => setLogoutOpen(true)}>
+          <HiLogout />{" "}
+          Logout
+        </span>
+      ),
+    },
+    {
+      key: "delete",
+      danger: true,
+      label: <span onClick={() => setDeleteAccountModal(true)}>Delete Account</span>,
+    },
+  ];
   return (
     <nav className="navbar navbar-expand bg-white shadow-sm px-2 py-2 border-bottom">
       <div className="container-fluid justify-content-between">
@@ -25,16 +50,13 @@ export default function DashboardNavbar({ userName, userInitials }) {
 
         <div className="d-flex align-items-center gap-3">
           <div className="d-flex align-items-center gap-2">
-            <div className="user-avatar">{userInitials || "U"}</div>
+            <Dropdown menu={{ items }} trigger={["click"]}>
+              <div className="user-avatar" style={{ cursor: "pointer" }}>
+                {userInitials || "U"}
+              </div>
+            </Dropdown>
             <span className="user-name">{userName || "User"}</span>
           </div>
-          <button
-            className="btn btn-outline-danger btn-sm"
-            onClick={() => setLogoutOpen(true)}
-          >
-            <HiLogout />
-            <span className="ms-1 d-none d-sm-inline">Logout</span>
-          </button>
           <CustomModal
             open={logoutOpen}
             title="Confirm Logout"
@@ -45,6 +67,19 @@ export default function DashboardNavbar({ userName, userInitials }) {
             okButtonProps={{ danger: true }}
           >
             <p>Are you sure you want to log out?</p>
+          </CustomModal>
+          <CustomModal
+            open={deleteAccountModal}
+            title="Delete Account"
+            onOk={handleDeleteAccount}
+            onCancel={() => setDeleteAccountModal(false)}
+            okText="Delete"
+            okButtonProps={{ danger: true }}
+          >
+            <p>
+              Are you sure you want to permanently delete your account and all
+              invoices? This action cannot be undone.
+            </p>
           </CustomModal>
         </div>
       </div>

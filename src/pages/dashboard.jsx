@@ -1,12 +1,18 @@
 import "./dashboard.scss";
 import { useState, useEffect } from "react";
+import { message } from "antd";
 import { useNavigate } from "react-router-dom";
 import Button from "../components/button";
 import InvoiceList from "../components/invoiceList";
 import ShortPreview from "../components/shortPreview";
 import DashboardNavbar from "../components/dashboardNavbar";
 import MobilePreviewModal from "../components/mobilePreviewModal";
-import { getAllInvoices, deleteInvoice, getMe } from "../services/api";
+import {
+  getAllInvoices,
+  deleteInvoice,
+  getMe,
+  deleteAccount,
+} from "../services/api";
 
 export default function Dashboard({ userName, onLogout, onUpdate }) {
   const navigate = useNavigate();
@@ -14,8 +20,8 @@ export default function Dashboard({ userName, onLogout, onUpdate }) {
   const [user, setUser] = useState(null);
   const [invoices, setInvoices] = useState([]);
   const [selectedInvoice, setSelectedInvoice] = useState(null);
- const [selectedInvoiceId, setSelectedInvoiceId] = useState(null);
- const [deleteModal, setDeleteModal] = useState(false);
+  const [selectedInvoiceId, setSelectedInvoiceId] = useState(null);
+  const [deleteModal, setDeleteModal] = useState(false);
   const [loading, setLoading] = useState(true);
   const [showMobilePreview, setShowMobilePreview] = useState(false);
 
@@ -76,33 +82,28 @@ export default function Dashboard({ userName, onLogout, onUpdate }) {
     navigate(`/create_invoice/${id}`);
   };
 
-  // const handleDelete = async (id, e) => {
-  //   e.stopPropagation(); // important (prevents row click)
-
-  //   try {
-  //     await deleteInvoice(id);
-  //     // remove from UI
-  //     setInvoices((prev) => prev.filter((inv) => inv._id !== id));
-  //   } catch (err) {
-  //     console.log(err);
-  //     alert("Delete failed");
-  //   }
-  // };
-
   const handleDelete = async (id) => {
     try {
       console.log("Deleting:", id);
 
       await deleteInvoice(id);
       setInvoices((prev) => prev.filter((inv) => inv._id !== id));
+       message.success({
+              content: "Invoice deleted successfully!",
+              duration: 4,
+            });
     } catch (err) {
       console.log(err);
-      alert("Delete failed");
+      message.error({
+                content: "Delete failed!",
+                duration: 4, 
+              });
     } finally {
       setDeleteModal(false);
       setSelectedInvoiceId(null);
     }
   };
+
   const getStatusBadge = (status) => {
     switch (status) {
       case "Paid":
@@ -116,12 +117,41 @@ export default function Dashboard({ userName, onLogout, onUpdate }) {
     }
   };
 
+  const [deleteAccountModal, setDeleteAccountModal] = useState(false);
+  const handleDeleteAccount = async () => {
+    try {
+      await deleteAccount();
+      message.success({
+        content: "Account deleted successfully!",
+        duration: 4,
+      });
+      localStorage.removeItem("token");
+
+      setTimeout(() => {
+        navigate("/");
+        window.location.reload();
+      }, 1000);
+    } catch (err) {
+      console.error(err);
+
+      message.error({
+        content: "Failed to delete account!",
+        duration: 4,
+      });
+    } finally {
+      setDeleteAccountModal(false);
+    }
+  };
+
   return (
     <div className="dashboard">
       <DashboardNavbar
         userName={user?.name}
         userInitials={userInitials}
         onLogout={onLogout}
+        handleDeleteAccount={handleDeleteAccount}
+        deleteAccountModal={deleteAccountModal}
+        setDeleteAccountModal={setDeleteAccountModal}
       />
       <div className="container-fluid py-4">
         <div className="d-flex justify-content-between align-items-center flex-nowrap gap-2">

@@ -135,6 +135,10 @@ function CreateInvoice() {
       console.log(response.data);
     } catch (error) {
       console.error("Error saving invoice:", error);
+      message.error({
+              content: "Failed to save invoice",
+              duration: 4,
+            });
     }
   };
 

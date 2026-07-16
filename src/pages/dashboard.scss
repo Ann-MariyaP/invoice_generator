@@ -22,14 +22,15 @@ $text-muted: #6b7280;
     height: 38px;
     background: $primary;
     font-size: 0.85rem;
-
     display: flex;
     align-items: center;
     justify-content: center;
-
     border-radius: 50%;
     color: #fff;
     font-weight: 700;
+      &:hover{
+        background: #bb1849;
+      }
   }
 
   .dashboard-header {
@@ -196,6 +197,9 @@ $text-muted: #6b7280;
       height: 32px;
       background: $primary;
       font-size: 0.75rem;
+      &:hover{
+        background: #bb1849;
+      }
     }
     .dashboard-header {
       font-size: 1.1rem !important;
